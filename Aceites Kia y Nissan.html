@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aceite Kia & Nissan USA</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6cf">
+
+<style>
+body{
+  font-family: system-ui, Arial;
+  background:#0b0f1a;
+  color:#eaeaf0;
+  padding:20px;
+  max-width:800px;
+  margin:auto;
+}
+h1{
+  text-align:center;
+  color:#6cf;
+}
+select,button{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  font-size:16px;
+  border-radius:10px;
+  border:none;
+}
+button{
+  background:#6cf;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{
+  opacity:.85;
+}
+.resultado{
+  background:#12182b;
+  padding:16px;
+  border-radius:12px;
+  margin-top:16px;
+}
+.footer{
+  text-align:center;
+  margin-top:30px;
+  font-size:13px;
+  color:#888;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🛢️ Aceite Oficial USA<br>Kia & Nissan</h1>
+
+<select id="marca">
+<option disabled selected>Marca</option>
+<option value="kia">Kia</option>
+<option value="nissan">Nissan</option>
+</select>
+
+<select id="modelo">
+<option disabled selected>Modelo</option>
+</select>
+
+<select id="anio">
+<option disabled selected>Año</option>
+</select>
+
+<button onclick="mostrar()">Consultar</button>
+
+<div id="salida" class="resultado"></div>
+
+<div class="footer">
+Creado por ISMAEL BIGIO<br>
+Email: BIGIO_TEC@ME.COM
+</div>
+
+<script>
+const YEARS = Array.from({length: 11}, (_, i) => 2015 + i);
+
+const MODELOS = {
+  kia:["Rio","Forte","K4","Soul","Optima","K5","Sportage","Sorento","Telluride","Seltos","Niro","Stinger","Cadenza","Carnival"],
+  nissan:["Versa","Sentra","Altima","Maxima","Rogue","Rogue Sport","Murano","Pathfinder","Armada","Frontier","Titan","NV200","370Z","GT-R","Leaf","Juke","Xterra"]
+};
+
+function obtenerAceite(marca, modelo, anio){
+  if(marca==="kia"){
+    if(modelo==="Forte" && anio<=2023) return "5W-20 / 5W-30 (Turbo)";
+    if(modelo==="Forte") return "0W-20";
+    if(modelo==="K4") return "0W-20";
+    if(modelo==="Soul" && anio<=2019) return "5W-20 / 5W-30";
+    if(modelo==="Soul") return "0W-20";
+    if(["Rio","K5","Telluride","Seltos","Niro"].includes(modelo)) return "0W-20";
+    if(["Optima","Sportage","Sorento"].includes(modelo)) return "0W-20 / 5W-30";
+    if(["Stinger","Cadenza"].includes(modelo)) return "5W-30";
+    if(modelo==="Carnival") return "0W-30 / 5W-30";
+  }
+
+  if(marca==="nissan"){
+    if(["Versa","Sentra","Rogue","Rogue Sport","Murano","Pathfinder","Armada","Frontier","Titan","NV200"].includes(modelo)) return "0W-20";
+    if(modelo==="Altima" && anio<=2018) return "0W-20 / 5W-30 (V6)";
+    if(modelo==="Altima") return "0W-20 / 5W-30 (VC-Turbo)";
+    if(modelo==="Maxima") return "5W-30";
+    if(modelo==="370Z") return "5W-30";
+    if(modelo==="GT-R") return "0W-40";
+    if(modelo==="Leaf") return "No usa aceite (Eléctrico)";
+    if(["Juke","Xterra"].includes(modelo)) return "5W-30";
+  }
+
+  return "Consultar manual.";
+}
+
+const marcaSel=document.getElementById("marca");
+const modeloSel=document.getElementById("modelo");
+const anioSel=document.getElementById("anio");
+const salida=document.getElementById("salida");
+
+marcaSel.onchange=()=>{
+  modeloSel.innerHTML="<option disabled selected>Modelo</option>";
+  anioSel.innerHTML="<option disabled selected>Año</option>";
+  salida.innerHTML="";
+  MODELOS[marcaSel.value].forEach(m=>{
+    modeloSel.innerHTML+=`<option value="${m}">${m}</option>`;
+  });
+};
+
+modeloSel.onchange=()=>{
+  anioSel.innerHTML="<option disabled selected>Año</option>";
+  YEARS.forEach(y=>{
+    anioSel.innerHTML+=`<option value="${y}">${y}</option>`;
+  });
+};
+
+function mostrar(){
+  const aceite=obtenerAceite(marcaSel.value,modeloSel.value,parseInt(anioSel.value));
+  salida.innerHTML=`<b>${marcaSel.value.toUpperCase()} ${modeloSel.value} ${anioSel.value}</b><br><br>🛢️ ${aceite}`;
+}
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
+
+</body>
+</html>
