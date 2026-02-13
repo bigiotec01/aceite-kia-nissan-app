@@ -3,30 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aceite por VIN | Kia & Nissan USA</title>
+<title>Aceite Kia & Nissan USA</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b0f1a">
 
 <style>
-body{font-family:system-ui,-apple-system,Arial;background:#0b0f1a;color:#eaeaf0;padding:20px}
-h1{text-align:center;color:#6cf}
-input,select,button{
-  width:100%;padding:14px;margin:10px 0;
-  font-size:16px;border-radius:10px;border:none
+body{
+  font-family:system-ui,-apple-system,Arial;
+  background:#0b0f1a;
+  color:#eaeaf0;
+  padding:20px
 }
-button{background:#6cf;color:#000;font-weight:bold}
-.resultado{background:#12182b;padding:16px;border-radius:12px;margin-top:16px;line-height:1.6}
+h1{text-align:center;color:#6cf}
+select,button{
+  width:100%;
+  padding:14px;
+  margin:10px 0;
+  font-size:16px;
+  border-radius:10px;
+  border:none
+}
+button{
+  background:#6cf;
+  color:#000;
+  font-weight:bold
+}
+.resultado{
+  background:#12182b;
+  padding:16px;
+  border-radius:12px;
+  margin-top:16px;
+  line-height:1.6
+}
 small{color:#9aa4c7}
 </style>
 </head>
 
 <body>
 
-<h1>🔍 Búsqueda por VIN<br>Kia & Nissan (USA)</h1>
-
-<input id="vin" placeholder="VIN (17 caracteres)" maxlength="17" autocapitalize="characters">
-
-<button onclick="buscarVIN()">Buscar por VIN</button>
-
-<hr style="opacity:.2">
+<h1>🛢️ Aceite Recomendado<br>Kia & Nissan (USA)</h1>
 
 <select id="marca">
   <option value="" disabled selected>Marca</option>
@@ -47,7 +63,6 @@ small{color:#9aa4c7}
 <div id="salida" class="resultado"></div>
 
 <script>
-// ===== BASE DE ACEITES (MISMA QUE YA TENÍAS) =====
 const DATA={
 kia:{
 "Rio":{from:2015,to:2023,oil:"0W-20 / 5W-20"},
@@ -62,7 +77,9 @@ kia:{
 "Seltos":{from:2021,to:2024,oil:"0W-20"},
 "Niro":{from:2017,to:2024,oil:"0W-20"},
 "Stinger":{from:2018,to:2023,oil:"5W-30"},
-"Carnival":{from:2022,to:2024,oil:"0W-20"}
+"Cadenza":{from:2015,to:2020,oil:"5W-30"},
+"Carnival":{from:2022,to:2024,oil:"0W-20"},
+"EV6":{from:2022,to:2024,oil:"⚡ Eléctrico – no usa aceite"}
 },
 nissan:{
 "Versa":{from:2015,to:2024,oil:"0W-20"},
@@ -70,92 +87,56 @@ nissan:{
 "Altima":{from:2015,to:2024,oil:"0W-20 / 5W-30"},
 "Maxima":{from:2015,to:2023,oil:"5W-30"},
 "Rogue":{from:2015,to:2024,oil:"0W-20"},
+"Rogue Sport":{from:2017,to:2022,oil:"0W-20"},
 "Murano":{from:2015,to:2024,oil:"0W-20"},
 "Pathfinder":{from:2015,to:2024,oil:"0W-20"},
-"Frontier":{from:2015,to:2024,oil:"0W-20"},
 "Armada":{from:2017,to:2024,oil:"0W-20"},
-"Kicks":{from:2018,to:2024,oil:"0W-20"}
+"Frontier":{from:2015,to:2024,oil:"0W-20"},
+"Titan":{from:2015,to:2024,oil:"0W-20"},
+"NV200":{from:2015,to:2021,oil:"0W-20"},
+"Kicks":{from:2018,to:2024,oil:"0W-20"},
+"Leaf":{from:2015,to:2024,oil:"⚡ Eléctrico – no usa aceite"},
+"Z":{from:2015,to:2024,oil:"5W-30"}
 }
 };
 
-// ===== DECODIFICACIÓN VIN =====
-const YEAR_MAP={
-F:2015,G:2016,H:2017,J:2018,K:2019,L:2020,
-M:2021,N:2022,P:2023,R:2024,S:2025
-};
+const marcaSel=document.getElementById("marca");
+const modeloSel=document.getElementById("modelo");
+const anioSel=document.getElementById("anio");
+const salida=document.getElementById("salida");
 
-function validarVIN(v){
-  return /^[A-HJ-NPR-Z0-9]{17}$/.test(v);
-}
-
-function buscarVIN(){
-  const vin=document.getElementById("vin").value.toUpperCase();
-  const salida=document.getElementById("salida");
-
-  if(!validarVIN(vin)){
-    salida.innerHTML="❌ VIN inválido (17 caracteres, sin I O Q).";
-    return;
-  }
-
-  const wmi=vin.substring(0,3);
-  const yearCode=vin[9];
-  const year=YEAR_MAP[yearCode];
-
-  let marca="";
-  if(wmi.startsWith("K")) marca="kia";
-  if(wmi.startsWith("1N")||wmi.startsWith("JN")) marca="nissan";
-
-  if(!marca || !year){
-    salida.innerHTML="⚠️ VIN válido pero no reconocido automáticamente.";
-    return;
-  }
-
-  // Auto-selección marca
-  document.getElementById("marca").value=marca;
-  cargarModelos(marca);
-
-  salida.innerHTML=`✔️ VIN válido<br>Marca: ${marca.toUpperCase()}<br>Año estimado: ${year}<br>
-  <small>Selecciona el modelo para confirmar aceite.</small>`;
-}
-
-function cargarModelos(marca){
-  const modeloSel=document.getElementById("modelo");
+marcaSel.onchange=()=>{
   modeloSel.innerHTML="<option disabled selected>Modelo</option>";
-  Object.keys(DATA[marca]).forEach(m=>{
+  anioSel.innerHTML="<option disabled selected>Año</option>";
+  salida.innerHTML="";
+  Object.keys(DATA[marcaSel.value]).forEach(m=>{
     modeloSel.innerHTML+=`<option>${m}</option>`;
   });
-}
-
-document.getElementById("marca").onchange=e=>{
-  cargarModelos(e.target.value);
 };
 
-document.getElementById("modelo").onchange=e=>{
-  const marca=document.getElementById("marca").value;
-  const d=DATA[marca][e.target.value];
-  const anioSel=document.getElementById("anio");
+modeloSel.onchange=()=>{
   anioSel.innerHTML="<option disabled selected>Año</option>";
+  const d=DATA[marcaSel.value][modeloSel.value];
   for(let y=d.from;y<=d.to;y++){
     anioSel.innerHTML+=`<option>${y}</option>`;
   }
 };
 
 function mostrar(){
-  const marca=document.getElementById("marca").value;
-  const modelo=document.getElementById("modelo").value;
-  const anio=document.getElementById("anio").value;
-
-  if(!marca||!modelo||!anio){
-    salida.innerHTML="⚠️ Completa todos los campos.";
+  if(!anioSel.value){
+    salida.innerHTML="⚠️ Selecciona todos los campos.";
     return;
   }
-
-  const d=DATA[marca][modelo];
+  const d=DATA[marcaSel.value][modeloSel.value];
   salida.innerHTML=`
-    <strong>${marca.toUpperCase()} ${modelo} ${anio}</strong><br><br>
+    <strong>${marcaSel.value.toUpperCase()} ${modeloSel.value} ${anioSel.value}</strong><br><br>
     🛢️ <b>Aceite recomendado:</b> ${d.oil}<br>
-    <small>*VIN usado como guía. Para motor exacto → API oficial.</small>
+    <small>*Base general mercado USA.</small>
   `;
+}
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
 }
 </script>
 
