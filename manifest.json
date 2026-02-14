@@ -1,11 +1,10 @@
 {
-  "name": "Aceite Kia & Nissan USA",
-  "short_name": "Aceite OEM",
+  "name": "Oil Guide Kia & Nissan",
+  "short_name": "Oil Guide",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#0b0f1a",
-  "theme_color": "#6cf",
-  "orientation": "portrait",
+  "background_color": "#0f1115",
+  "theme_color": "#0f1115",
   "icons": [
     {
       "src": "icon-192.png",
@@ -13,8 +12,8 @@
       "type": "image/png"
     },
     {
-      "src": "icon-512.png",
-      "sizes": "512x512",
+      "src": "icon-152.png",
+      "sizes": "152x152",
       "type": "image/png"
     }
   ]
