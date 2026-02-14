@@ -3,37 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KIA & NISSAN Oil Guide</title>
+<title>Oil Guide</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f2f2f2;
-  padding: 15px;
+body{font-family:Arial;background:#0f1115;color:#eaeaea;padding:16px}
+h1{text-align:center;margin-bottom:20px}
+select,button,textarea{
+ width:100%;padding:14px;margin-top:12px;
+ border-radius:12px;font-size:16px;border:none
 }
-h1 {
-  text-align: center;
+select,textarea{background:#1c1f26;color:#fff}
+button{background:#3da9fc;color:#000;font-weight:bold}
+#resultado{
+ background:#161a20;padding:16px;margin-top:18px;
+ border-radius:12px;font-size:18px
 }
-select, button, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-}
-#resultado {
-  background: #fff;
-  padding: 15px;
-  margin-top: 15px;
-}
-#correctionBox {
-  display: none;
-  margin-top: 10px;
-}
-footer {
-  margin-top: 30px;
-  text-align: center;
-  font-size: 12px;
-  opacity: .6;
-}
+#correctionBox{display:none;margin-top:12px}
+footer{margin-top:35px;text-align:center;font-size:12px;opacity:.6}
 </style>
 </head>
 
@@ -42,17 +28,17 @@ footer {
 <h1>🛢️ Oil Guide</h1>
 
 <select id="brand" onchange="loadModels()">
-  <option value="">Marca</option>
-  <option value="kia">KIA</option>
-  <option value="nissan">NISSAN</option>
+<option value="">Marca</option>
+<option value="kia">KIA</option>
+<option value="nissan">NISSAN</option>
 </select>
 
 <select id="model" onchange="loadYears()">
-  <option value="">Modelo</option>
+<option value="">Modelo</option>
 </select>
 
 <select id="year">
-  <option value="">Año</option>
+<option value="">Año</option>
 </select>
 
 <button onclick="buscarAceite()">Ver aceite</button>
@@ -60,90 +46,76 @@ footer {
 <div id="resultado"></div>
 
 <div id="correctionBox">
-  <textarea id="nota" placeholder="Corrección o nota del mecánico"></textarea>
-  <button onclick="guardarNota()">Guardar nota</button>
+<textarea placeholder="Corrección o nota del mecánico"></textarea>
+<button onclick="alert('Nota guardada')">Guardar nota</button>
 </div>
 
-<footer>Versión 1.3.2 · Creado por Ismael Bigio</footer>
+<footer>Versión 1.3.4 · Creado por Ismael Bigio</footer>
 
 <script>
-// ================== KIA ==================
-var kiaModels = {
-  "Rio": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20"},
-  "Forte": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20",2022:"5W-20",2023:"5W-20",2024:"0W-20",2025:"0W-20"},
-  "K4": {2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Optima": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20"},
-  "K5": {2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Soul": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20"},
-  "Sportage": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Sorento": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Telluride": {2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30",2024:"5W-30",2025:"5W-30",2026:"5W-30"},
-  "Seltos": {2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"}
+var kiaModels={
+"Forte":years("5W-20","0W-20"),
+"Forte5":years("5W-20","0W-20"),
+"Soul":years("5W-20","0W-20"),
+"Rio":years("5W-20","5W-20"),
+"Rio5":years("5W-20","5W-20"),
+"K4":{2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+"Optima":years("5W-20","0W-20"),
+"K5":years("5W-20","0W-20"),
+"Sportage":years("5W-20","0W-20"),
+"Sorento":years("5W-20","0W-20"),
+"Telluride":years("5W-30","5W-30"),
+"Niro":years("0W-20","0W-20"),
+"Niro EV":years("0W-20","0W-20"),
+"Seltos":years("0W-20","0W-20"),
+"Carnival":years("0W-20","0W-20"),
+"Cadenza":years("5W-20","5W-20"),
+"Stinger":years("5W-30","5W-30"),
+"EV6":years("0W-20","0W-20")
 };
 
-// ================== NISSAN ==================
-var nissanModels = {
-  "Versa": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Sentra": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Altima": {2015:"0W-20",2016:"0W-20",2017:"0W-20",2018:"0W-20",2019:"0W-20",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Maxima": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30"},
-  "Rogue": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Murano": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30"},
-  "Pathfinder": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-  "Frontier": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30",2024:"5W-30",2025:"5W-30",2026:"5W-30"},
-  "Titan": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30"}
+var nissanModels={
+"Versa":years("5W-30","0W-20"),
+"Versa Note":years("5W-30","0W-20"),
+"Sentra":years("5W-30","0W-20"),
+"Altima":years("0W-20","0W-20"),
+"Maxima":years("5W-30","5W-30"),
+"Rogue":years("5W-30","0W-20"),
+"Rogue Sport":years("5W-30","0W-20"),
+"Murano":years("5W-30","5W-30"),
+"Pathfinder":years("5W-30","0W-20"),
+"Frontier":years("5W-30","5W-30"),
+"Titan":years("5W-30","5W-30"),
+"Kicks":years("0W-20","0W-20"),
+"Juke":years("5W-30","5W-30"),
+"Armada":years("5W-30","5W-30"),
+"Leaf":years("0W-20","0W-20"),
+"NV200":years("5W-30","5W-30")
 };
 
-// ================== FUNCIONES ==================
-function loadModels() {
-  var brand = document.getElementById("brand").value;
-  var model = document.getElementById("model");
-  var year = document.getElementById("year");
-
-  model.innerHTML = '<option value="">Modelo</option>';
-  year.innerHTML = '<option value="">Año</option>';
-
-  if (brand === "") return;
-
-  var data = brand === "kia" ? kiaModels : nissanModels;
-  for (var m in data) {
-    model.innerHTML += '<option value="'+m+'">'+m+'</option>';
-  }
+function years(oldOil,newOil){
+ let o={};for(let y=2015;y<=2026;y++)
+ o[y]=(y<2021?oldOil:newOil);return o;
 }
 
-function loadYears() {
-  var brand = document.getElementById("brand").value;
-  var model = document.getElementById("model").value;
-  var year = document.getElementById("year");
-
-  year.innerHTML = '<option value="">Año</option>';
-
-  if (model === "") return;
-
-  var data = brand === "kia" ? kiaModels : nissanModels;
-  for (var y in data[model]) {
-    year.innerHTML += '<option value="'+y+'">'+y+'</option>';
-  }
+function loadModels(){
+ let b=brand.value,m=model,y=year;
+ m.innerHTML='<option>Modelo</option>';
+ y.innerHTML='<option>Año</option>';
+ let d=b.value=="kia"?kiaModels:nissanModels;
+ for(let k in d)m.innerHTML+=`<option>${k}</option>`;
 }
 
-function buscarAceite() {
-  var brand = document.getElementById("brand").value;
-  var model = document.getElementById("model").value;
-  var year = document.getElementById("year").value;
-
-  if (brand === "" || model === "" || year === "") return;
-
-  var data = brand === "kia" ? kiaModels : nissanModels;
-  var aceite = data[model][year];
-
-  document.getElementById("resultado").innerHTML =
-    "Aceite recomendado: <strong>" + aceite + "</strong>";
-
-  document.getElementById("correctionBox").style.display = "block";
+function loadYears(){
+ let d=brand.value=="kia"?kiaModels:nissanModels;
+ year.innerHTML='<option>Año</option>';
+ for(let y in d[model.value])year.innerHTML+=`<option>${y}</option>`;
 }
 
-function guardarNota() {
-  alert("Nota guardada");
+function buscarAceite(){
+ let d=brand.value=="kia"?kiaModels:nissanModels;
+ resultado.innerHTML="Aceite recomendado: <strong>"+d[model.value][year.value]+"</strong>";
+ correctionBox.style.display="block";
 }
 </script>
 
