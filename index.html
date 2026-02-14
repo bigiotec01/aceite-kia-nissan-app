@@ -16,7 +16,7 @@ body{
   padding:20px
 }
 h1{text-align:center;color:#6cf}
-select,button{
+select,button,input{
   width:100%;
   padding:14px;
   margin:10px 0;
@@ -36,7 +36,12 @@ button{
   margin-top:16px;
   line-height:1.6
 }
-small{color:#9aa4c7}
+footer{
+  text-align:center;
+  margin-top:30px;
+  font-size:13px;
+  color:#9aa4c7
+}
 </style>
 </head>
 
@@ -61,6 +66,13 @@ small{color:#9aa4c7}
 <button onclick="mostrar()">Ver aceite</button>
 
 <div id="salida" class="resultado"></div>
+
+<input id="override" placeholder="Corregir aceite (ej: 0W-20)">
+<button onclick="guardarOverride()">Guardar corrección</button>
+
+<footer>
+  Creado por Ismael Bigio · Herramienta técnica independiente
+</footer>
 
 <script>
 const DATA={
@@ -122,17 +134,32 @@ modeloSel.onchange=()=>{
   }
 };
 
+function claveActual(){
+  return `${marcaSel.value}-${modeloSel.value}-${anioSel.value}`;
+}
+
 function mostrar(){
   if(!anioSel.value){
     salida.innerHTML="⚠️ Selecciona todos los campos.";
     return;
   }
   const d=DATA[marcaSel.value][modeloSel.value];
+  const guardado=localStorage.getItem(claveActual());
+  const aceiteFinal=guardado || d.oil;
+
   salida.innerHTML=`
     <strong>${marcaSel.value.toUpperCase()} ${modeloSel.value} ${anioSel.value}</strong><br><br>
-    🛢️ <b>Aceite recomendado:</b> ${d.oil}<br>
-    <small>*Base general mercado USA.</small>
+    🛢️ <b>Aceite recomendado:</b> ${aceiteFinal}<br>
+    <small>${guardado ? "✔️ Corrección manual guardada" : "*Base general mercado USA."}</small>
   `;
+}
+
+function guardarOverride(){
+  const valor=document.getElementById("override").value.trim();
+  if(!valor) return;
+  localStorage.setItem(claveActual(), valor);
+  document.getElementById("override").value="";
+  mostrar();
 }
 
 if("serviceWorker" in navigator){
