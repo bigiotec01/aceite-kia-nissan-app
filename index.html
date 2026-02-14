@@ -3,181 +3,147 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aceite Kia & Nissan USA</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0b0f1a">
+<title>KIA & NISSAN Oil Guide</title>
 
 <style>
-body{
-  font-family:system-ui,-apple-system,Arial;
-  background:#0b0f1a;
-  color:#eaeaf0;
-  padding:20px
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  padding: 15px;
 }
-h1{text-align:center;color:#6cf}
-select,button,input{
-  width:100%;
-  padding:14px;
-  margin:10px 0;
-  font-size:16px;
-  border-radius:10px;
-  border:none
+h1 {
+  text-align: center;
 }
-button{
-  background:#6cf;
-  color:#000;
-  font-weight:bold
+select, button, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
 }
-.resultado{
-  background:#12182b;
-  padding:16px;
-  border-radius:12px;
-  margin-top:16px;
-  line-height:1.6
+#resultado {
+  background: #fff;
+  padding: 15px;
+  margin-top: 15px;
 }
-#correccion{
-  display:none;
-  margin-top:10px
+#correctionBox {
+  display: none;
+  margin-top: 10px;
 }
-footer{
-  text-align:center;
-  margin-top:30px;
-  font-size:13px;
-  color:#9aa4c7
+footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 12px;
+  opacity: .6;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🛢️ Aceite Recomendado<br>Kia & Nissan (USA)</h1>
+<h1>🛢️ Oil Guide</h1>
 
-<select id="marca">
-  <option value="" disabled selected>Marca</option>
-  <option value="kia">Kia</option>
-  <option value="nissan">Nissan</option>
+<select id="brand" onchange="loadModels()">
+  <option value="">Marca</option>
+  <option value="kia">KIA</option>
+  <option value="nissan">NISSAN</option>
 </select>
 
-<select id="modelo">
-  <option value="" disabled selected>Modelo</option>
+<select id="model" onchange="loadYears()">
+  <option value="">Modelo</option>
 </select>
 
-<select id="anio">
-  <option value="" disabled selected>Año</option>
+<select id="year">
+  <option value="">Año</option>
 </select>
 
-<button onclick="mostrar()">Ver aceite</button>
+<button onclick="buscarAceite()">Ver aceite</button>
 
-<div id="salida" class="resultado"></div>
+<div id="resultado"></div>
 
-<!-- Corrección manual (oculta hasta mostrar aceite) -->
-<div id="correccion">
-  <input id="override" placeholder="¿Corregir aceite o añadir nota? (ej: 0W-20)">
-  <button onclick="guardarOverride()">Guardar corrección / nota</button>
+<div id="correctionBox">
+  <textarea id="nota" placeholder="Corrección o nota del mecánico"></textarea>
+  <button onclick="guardarNota()">Guardar nota</button>
 </div>
 
-<footer>
-  Creado por Ismael Bigio · Herramienta técnica independiente<br>
-  Versión 1.1
-</footer>
+<footer>Versión 1.3.2 · Creado por Ismael Bigio</footer>
 
 <script>
-const DATA={
-kia:{
-"Rio":{from:2015,to:2023,oil:"0W-20 / 5W-20"},
-"Forte":{from:2015,to:2023,oil:"0W-20"},
-"K4":{from:2024,to:2025,oil:"0W-20"},
-"Soul":{from:2015,to:2024,oil:"0W-20 / 5W-30"},
-"Optima":{from:2015,to:2020,oil:"0W-20 / 5W-30"},
-"K5":{from:2021,to:2024,oil:"0W-20"},
-"Sportage":{from:2015,to:2024,oil:"0W-20 / 5W-30"},
-"Sorento":{from:2015,to:2024,oil:"0W-20 / 5W-30"},
-"Telluride":{from:2020,to:2024,oil:"0W-20"},
-"Seltos":{from:2021,to:2024,oil:"0W-20"},
-"Niro":{from:2017,to:2024,oil:"0W-20"},
-"Stinger":{from:2018,to:2023,oil:"5W-30"},
-"Cadenza":{from:2015,to:2020,oil:"5W-30"},
-"Carnival":{from:2022,to:2024,oil:"0W-20"},
-"EV6":{from:2022,to:2024,oil:"⚡ Eléctrico – no usa aceite"}
-},
-nissan:{
-"Versa":{from:2015,to:2024,oil:"0W-20"},
-"Sentra":{from:2015,to:2024,oil:"0W-20"},
-"Altima":{from:2015,to:2024,oil:"0W-20 / 5W-30"},
-"Maxima":{from:2015,to:2023,oil:"5W-30"},
-"Rogue":{from:2015,to:2024,oil:"0W-20"},
-"Rogue Sport":{from:2017,to:2022,oil:"0W-20"},
-"Murano":{from:2015,to:2024,oil:"0W-20"},
-"Pathfinder":{from:2015,to:2024,oil:"0W-20"},
-"Armada":{from:2017,to:2024,oil:"0W-20"},
-"Frontier":{from:2015,to:2024,oil:"0W-20"},
-"Titan":{from:2015,to:2024,oil:"0W-20"},
-"NV200":{from:2015,to:2021,oil:"0W-20"},
-"Kicks":{from:2018,to:2024,oil:"0W-20"},
-"Leaf":{from:2015,to:2024,oil:"⚡ Eléctrico – no usa aceite"},
-"Z":{from:2015,to:2024,oil:"5W-30"}
-}
+// ================== KIA ==================
+var kiaModels = {
+  "Rio": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20"},
+  "Forte": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20",2022:"5W-20",2023:"5W-20",2024:"0W-20",2025:"0W-20"},
+  "K4": {2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Optima": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20"},
+  "K5": {2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Soul": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20"},
+  "Sportage": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"5W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Sorento": {2015:"5W-20",2016:"5W-20",2017:"5W-20",2018:"5W-20",2019:"5W-20",2020:"5W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Telluride": {2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30",2024:"5W-30",2025:"5W-30",2026:"5W-30"},
+  "Seltos": {2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"}
 };
 
-const marcaSel=document.getElementById("marca");
-const modeloSel=document.getElementById("modelo");
-const anioSel=document.getElementById("anio");
-const salida=document.getElementById("salida");
-const correccionBox=document.getElementById("correccion");
-
-marcaSel.onchange=()=>{
-  modeloSel.innerHTML="<option disabled selected>Modelo</option>";
-  anioSel.innerHTML="<option disabled selected>Año</option>";
-  salida.innerHTML="";
-  correccionBox.style.display="none";
-  Object.keys(DATA[marcaSel.value]).forEach(m=>{
-    modeloSel.innerHTML+=`<option>${m}</option>`;
-  });
+// ================== NISSAN ==================
+var nissanModels = {
+  "Versa": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Sentra": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Altima": {2015:"0W-20",2016:"0W-20",2017:"0W-20",2018:"0W-20",2019:"0W-20",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Maxima": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30"},
+  "Rogue": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Murano": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30"},
+  "Pathfinder": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"0W-20",2021:"0W-20",2022:"0W-20",2023:"0W-20",2024:"0W-20",2025:"0W-20",2026:"0W-20"},
+  "Frontier": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30",2024:"5W-30",2025:"5W-30",2026:"5W-30"},
+  "Titan": {2015:"5W-30",2016:"5W-30",2017:"5W-30",2018:"5W-30",2019:"5W-30",2020:"5W-30",2021:"5W-30",2022:"5W-30",2023:"5W-30"}
 };
 
-modeloSel.onchange=()=>{
-  anioSel.innerHTML="<option disabled selected>Año</option>";
-  correccionBox.style.display="none";
-  const d=DATA[marcaSel.value][modeloSel.value];
-  for(let y=d.from;y<=d.to;y++){
-    anioSel.innerHTML+=`<option>${y}</option>`;
+// ================== FUNCIONES ==================
+function loadModels() {
+  var brand = document.getElementById("brand").value;
+  var model = document.getElementById("model");
+  var year = document.getElementById("year");
+
+  model.innerHTML = '<option value="">Modelo</option>';
+  year.innerHTML = '<option value="">Año</option>';
+
+  if (brand === "") return;
+
+  var data = brand === "kia" ? kiaModels : nissanModels;
+  for (var m in data) {
+    model.innerHTML += '<option value="'+m+'">'+m+'</option>';
   }
-};
-
-function claveActual(){
-  return `${marcaSel.value}-${modeloSel.value}-${anioSel.value}`;
 }
 
-function mostrar(){
-  if(!anioSel.value){
-    salida.innerHTML="⚠️ Selecciona todos los campos.";
-    return;
+function loadYears() {
+  var brand = document.getElementById("brand").value;
+  var model = document.getElementById("model").value;
+  var year = document.getElementById("year");
+
+  year.innerHTML = '<option value="">Año</option>';
+
+  if (model === "") return;
+
+  var data = brand === "kia" ? kiaModels : nissanModels;
+  for (var y in data[model]) {
+    year.innerHTML += '<option value="'+y+'">'+y+'</option>';
   }
-
-  const d=DATA[marcaSel.value][modeloSel.value];
-  const guardado=localStorage.getItem(claveActual());
-  const aceiteFinal=guardado || d.oil;
-
-  salida.innerHTML=`
-    <strong>${marcaSel.value.toUpperCase()} ${modeloSel.value} ${anioSel.value}</strong><br><br>
-    🛢️ <b>Aceite recomendado:</b> ${aceiteFinal}<br>
-    <small>${guardado ? "✔️ Corrección / nota guardada" : "*Base general mercado USA."}</small>
-  `;
-
-  correccionBox.style.display="block";
 }
 
-function guardarOverride(){
-  const valor=document.getElementById("override").value.trim();
-  if(!valor) return;
-  localStorage.setItem(claveActual(), valor);
-  document.getElementById("override").value="";
-  mostrar();
+function buscarAceite() {
+  var brand = document.getElementById("brand").value;
+  var model = document.getElementById("model").value;
+  var year = document.getElementById("year").value;
+
+  if (brand === "" || model === "" || year === "") return;
+
+  var data = brand === "kia" ? kiaModels : nissanModels;
+  var aceite = data[model][year];
+
+  document.getElementById("resultado").innerHTML =
+    "Aceite recomendado: <strong>" + aceite + "</strong>";
+
+  document.getElementById("correctionBox").style.display = "block";
 }
 
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js");
+function guardarNota() {
+  alert("Nota guardada");
 }
 </script>
 
