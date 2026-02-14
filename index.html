@@ -36,6 +36,10 @@ button{
   margin-top:16px;
   line-height:1.6
 }
+#correccion{
+  display:none;
+  margin-top:10px
+}
 footer{
   text-align:center;
   margin-top:30px;
@@ -67,11 +71,15 @@ footer{
 
 <div id="salida" class="resultado"></div>
 
-<input id="override" placeholder="Corregir aceite (ej: 0W-20)">
-<button onclick="guardarOverride()">Guardar corrección</button>
+<!-- Corrección manual (oculta hasta mostrar aceite) -->
+<div id="correccion">
+  <input id="override" placeholder="¿Corregir aceite o añadir nota? (ej: 0W-20)">
+  <button onclick="guardarOverride()">Guardar corrección / nota</button>
+</div>
 
 <footer>
-  Creado por Ismael Bigio · Herramienta técnica independiente
+  Creado por Ismael Bigio · Herramienta técnica independiente<br>
+  Versión 1.1
 </footer>
 
 <script>
@@ -116,11 +124,13 @@ const marcaSel=document.getElementById("marca");
 const modeloSel=document.getElementById("modelo");
 const anioSel=document.getElementById("anio");
 const salida=document.getElementById("salida");
+const correccionBox=document.getElementById("correccion");
 
 marcaSel.onchange=()=>{
   modeloSel.innerHTML="<option disabled selected>Modelo</option>";
   anioSel.innerHTML="<option disabled selected>Año</option>";
   salida.innerHTML="";
+  correccionBox.style.display="none";
   Object.keys(DATA[marcaSel.value]).forEach(m=>{
     modeloSel.innerHTML+=`<option>${m}</option>`;
   });
@@ -128,6 +138,7 @@ marcaSel.onchange=()=>{
 
 modeloSel.onchange=()=>{
   anioSel.innerHTML="<option disabled selected>Año</option>";
+  correccionBox.style.display="none";
   const d=DATA[marcaSel.value][modeloSel.value];
   for(let y=d.from;y<=d.to;y++){
     anioSel.innerHTML+=`<option>${y}</option>`;
@@ -143,6 +154,7 @@ function mostrar(){
     salida.innerHTML="⚠️ Selecciona todos los campos.";
     return;
   }
+
   const d=DATA[marcaSel.value][modeloSel.value];
   const guardado=localStorage.getItem(claveActual());
   const aceiteFinal=guardado || d.oil;
@@ -150,8 +162,10 @@ function mostrar(){
   salida.innerHTML=`
     <strong>${marcaSel.value.toUpperCase()} ${modeloSel.value} ${anioSel.value}</strong><br><br>
     🛢️ <b>Aceite recomendado:</b> ${aceiteFinal}<br>
-    <small>${guardado ? "✔️ Corrección manual guardada" : "*Base general mercado USA."}</small>
+    <small>${guardado ? "✔️ Corrección / nota guardada" : "*Base general mercado USA."}</small>
   `;
+
+  correccionBox.style.display="block";
 }
 
 function guardarOverride(){
