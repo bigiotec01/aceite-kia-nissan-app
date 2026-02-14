@@ -1,110 +1,185 @@
-// ===== UTIL =====
-// Genera un objeto de años desde 2015 hasta 2026 
-function oil(oldOil, newOil) {
-  const obj = {};
-  for (let y = 2015; y <= 2026; y++) {
-    obj[y] = (y < 2021 ? oldOil : newOil);
-  }
-  return obj;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oil Guide Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f1115">
+    <style>
+        body { margin:0; font-family:Arial, sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
+        h1 { text-align:center; color:#3da9fc; margin-bottom:20px; }
+        select, button, textarea { 
+            width:100%; padding:16px; margin-top:12px; font-size:16px; 
+            border-radius:12px; border:none; box-sizing: border-box; 
+        }
+        select, textarea { background:#1c1f26; color:#fff; border: 1px solid #333; }
+        button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
+        button:active { transform: scale(0.98); opacity: 0.8; }
+        #resultado { 
+            background:#161a20; padding:16px; margin-top:18px; 
+            border-radius:12px; font-size:18px; border-left: 5px solid #3da9fc;
+            display: none;
+        }
+        #correctionBox { display:none; margin-top:14px; }
+        footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.5; }
+    </style>
+</head>
+<body>
+
+    <h1>🛢️ Oil Guide</h1>
+
+    <select id="brand" onchange="loadModels()">
+        <option value="">-- Seleccionar Marca --</option>
+        <option value="kia">KIA</option>
+        <option value="nissan">NISSAN</option>
+    </select>
+
+    <select id="model" onchange="loadYears()">
+        <option value="">-- Modelo --</option>
+    </select>
+
+    <select id="year">
+        <option value="">-- Año --</option>
+    </select>
+
+    <button onclick="buscarAceite()">VER RECOMENDACIÓN</button>
+
+    <div id="resultado"></div>
+
+    <div id="correctionBox">
+        <textarea id="note" placeholder="Escribe aquí una nota o corrección técnica..."></textarea>
+        <button onclick="guardarNota()" style="background:#2ecc71;">GUARDAR NOTA</button>
+    </div>
+
+    <footer>Versión 1.4 · Ismael Bigio</footer>
+
+<script>
+// Registro de Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => console.log("Error SW:", err));
 }
 
-// ===== KIA - Modelos Completos  =====
-const kiaModels = {
-  "Forte": oil("5W-20", "0W-20"),
-  "Forte5": oil("5W-20", "0W-20"),
-  "Rio": oil("5W-20", "5W-20"),
-  "Rio5": oil("5W-20", "5W-20"),
-  "Soul": oil("5W-20", "0W-20"),
-  "Optima": oil("5W-20", "0W-20"),
-  "K5": oil("5W-20", "0W-20"),
-  "K4": { 2024: "0W-20", 2025: "0W-20", 2026: "0W-20" },
-  "Sportage": oil("5W-20", "0W-20"),
-  "Sorento": oil("5W-20", "0W-20"),
-  "Telluride": oil("5W-30", "5W-30"),
-  "Seltos": oil("0W-20", "0W-20"),
-  "Niro": oil("0W-20", "0W-20"),
-  "Carnival": oil("0W-20", "0W-20"),
-  "Cadenza": oil("5W-20", "5W-20"),
-  "Stinger": oil("5W-30", "5W-30"),
-  "EV6": oil("0W-20", "0W-20")
+// Función generadora de datos de 2015 a 2026
+function oil(oldOil, newOil) {
+    const obj = {};
+    for (let y = 2015; y <= 2026; y++) { obj[y] = (y < 2021 ? oldOil : newOil); }
+    return obj;
+}
+
+// Base de datos completa KIA
+const kiaData = {
+    "Cadenza": oil("5W-20", "5W-20"),
+    "Carnival": oil("0W-20", "0W-20"),
+    "EV6": oil("0W-20", "0W-20"),
+    "Forte": oil("5W-20", "0W-20"),
+    "Forte5": oil("5W-20", "0W-20"),
+    "K4": { 2024: "0W-20", 2025: "0W-20", 2026: "0W-20" },
+    "K5": oil("5W-20", "0W-20"),
+    "Niro": oil("0W-20", "0W-20"),
+    "Optima": oil("5W-20", "0W-20"),
+    "Rio": oil("5W-20", "5W-20"),
+    "Rio5": oil("5W-20", "5W-20"),
+    "Seltos": oil("0W-20", "0W-20"),
+    "Sorento": oil("5W-20", "0W-20"),
+    "Soul": oil("5W-20", "0W-20"),
+    "Sportage": oil("5W-20", "0W-20"),
+    "Stinger": oil("5W-30", "5W-30"),
+    "Telluride": oil("5W-30", "5W-30")
 };
 
-// ===== NISSAN - Modelos Completos  =====
-const nissanModels = {
-  "Versa": oil("5W-30", "0W-20"),
-  "Versa Note": oil("5W-30", "0W-20"),
-  "Sentra": oil("5W-30", "0W-20"),
-  "Altima": oil("0W-20", "0W-20"),
-  "Maxima": oil("5W-30", "5W-30"),
-  "Kicks": oil("0W-20", "0W-20"),
-  "Juke": oil("5W-30", "5W-30"),
-  "Rogue": oil("5W-30", "0W-20"),
-  "Rogue Sport": oil("5W-30", "0W-20"),
-  "Murano": oil("5W-30", "5W-30"),
-  "Pathfinder": oil("5W-30", "0W-20"),
-  "Frontier": oil("5W-30", "5W-30"),
-  "Titan": oil("5W-30", "5W-30"),
-  "Armada": oil("5W-30", "5W-30"),
-  "NV200": oil("5W-30", "5W-30"),
-  "Leaf": oil("0W-20", "0W-20")
+// Base de datos completa NISSAN
+const nissanData = {
+    "Altima": oil("0W-20", "0W-20"),
+    "Armada": oil("5W-30", "5W-30"),
+    "Frontier": oil("5W-30", "5W-30"),
+    "Juke": oil("5W-30", "5W-30"),
+    "Kicks": oil("0W-20", "0W-20"),
+    "Leaf": oil("0W-20", "0W-20"),
+    "Maxima": oil("5W-30", "5W-30"),
+    "Murano": oil("5W-30", "5W-30"),
+    "NV200": oil("5W-30", "5W-30"),
+    "Pathfinder": oil("5W-30", "0W-20"),
+    "Rogue": oil("5W-30", "0W-20"),
+    "Rogue Sport": oil("5W-30", "0W-20"),
+    "Sentra": oil("5W-30", "0W-20"),
+    "Titan": oil("5W-30", "5W-30"),
+    "Versa": oil("5W-30", "0W-20"),
+    "Versa Note": oil("5W-30", "0W-20")
 };
 
-// ===== LOGIC  =====
 function loadModels() {
-  const brandSelect = document.getElementById("brand");
-  const modelSelect = document.getElementById("model");
-  const yearSelect = document.getElementById("year");
-  const resultDiv = document.getElementById("resultado");
-  const correctionBox = document.getElementById("correctionBox");
+    const brand = document.getElementById("brand").value;
+    const modelDropdown = document.getElementById("model");
+    const yearDropdown = document.getElementById("year");
+    
+    modelDropdown.innerHTML = '<option value="">-- Modelo --</option>';
+    yearDropdown.innerHTML = '<option value="">-- Año --</option>';
+    document.getElementById("resultado").style.display = "none";
+    document.getElementById("correctionBox").style.display = "none";
 
-  modelSelect.innerHTML = '<option value="">Modelo</option>';
-  yearSelect.innerHTML = '<option value="">Año</option>';
-  resultDiv.innerHTML = '';
-  correctionBox.style.display = "none";
+    if (!brand) return;
 
-  if (!brandSelect.value) return;
-
-  const data = brandSelect.value === "kia" ? kiaModels : nissanModels;
-  
-  // Ordenar alfabéticamente para mejor experiencia de usuario
-  const sortedModels = Object.keys(data).sort();
-  
-  for (const m of sortedModels) {
-    modelSelect.innerHTML += `<option value="${m}">${m}</option>`;
-  }
+    const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
+    models.sort().forEach(m => {
+        let el = document.createElement("option");
+        el.textContent = m;
+        el.value = m;
+        modelDropdown.appendChild(el);
+    });
 }
 
 function loadYears() {
-  const brandSelect = document.getElementById("brand");
-  const modelSelect = document.getElementById("model");
-  const yearSelect = document.getElementById("year");
+    const brand = document.getElementById("brand").value;
+    const model = document.getElementById("model").value;
+    const yearDropdown = document.getElementById("year");
+    yearDropdown.innerHTML = '<option value="">-- Año --</option>';
 
-  yearSelect.innerHTML = '<option value="">Año</option>';
-  if (!modelSelect.value) return;
+    if (!model) return;
 
-  const data = brandSelect.value === "kia" ? kiaModels : nissanModels;
-  const years = data[modelSelect.value];
-  
-  for (const y in years) {
-    yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-  }
+    const data = brand === "kia" ? kiaData[model] : nissanData[model];
+    Object.keys(data).forEach(y => {
+        let el = document.createElement("option");
+        el.textContent = y;
+        el.value = y;
+        yearDropdown.appendChild(el);
+    });
 }
 
 function buscarAceite() {
-  const brandVal = document.getElementById("brand").value;
-  const modelVal = document.getElementById("model").value;
-  const yearVal = document.getElementById("year").value;
-  const resultDiv = document.getElementById("resultado");
-  const correctionBox = document.getElementById("correctionBox");
+    const b = document.getElementById("brand").value;
+    const m = document.getElementById("model").value;
+    const y = document.getElementById("year").value;
+    const resDiv = document.getElementById("resultado");
 
-  if (!brandVal || !modelVal || !yearVal) {
-    alert("Por favor selecciona Marca, Modelo y Año");
-    return;
-  }
+    if (!y) { alert("Por favor selecciona todos los campos"); return; }
 
-  const data = brandVal === "kia" ? kiaModels : nissanModels;
-  const oilType = data[modelVal][yearVal];
-  
-  resultDiv.innerHTML = `Aceite recomendado: <strong>${oilType}</strong>`;
-  correctionBox.style.display = "block";
+    const data = b === "kia" ? kiaData[m][y] : nissanData[m][y];
+    const storageKey = `note_${b}_${m}_${y}`;
+    const savedNote = localStorage.getItem(storageKey) || "";
+
+    resDiv.style.display = "block";
+    resDiv.innerHTML = `Aceite recomendado: <strong style="color:#3da9fc; font-size:22px;">${data}</strong>`;
+    
+    if (savedNote) {
+        resDiv.innerHTML += `<div style="margin-top:10px; padding-top:10px; border-top:1px solid #333; font-size:14px; color:#2ecc71;">Nota guardada: ${savedNote}</div>`;
+    }
+
+    document.getElementById("note").value = savedNote;
+    document.getElementById("correctionBox").style.display = "block";
 }
+
+function guardarNota() {
+    const b = document.getElementById("brand").value;
+    const m = document.getElementById("model").value;
+    const y = document.getElementById("year").value;
+    const text = document.getElementById("note").value;
+    
+    if (!y) return;
+    localStorage.setItem(`note_${b}_${m}_${y}`, text);
+    alert("¡Nota técnica guardada!");
+    buscarAceite();
+}
+</script>
+</body>
+</html>
