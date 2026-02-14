@@ -50,71 +50,78 @@ footer{margin-top:35px;text-align:center;font-size:12px;opacity:.6}
 <button onclick="alert('Nota guardada')">Guardar nota</button>
 </div>
 
-<footer>Versión 1.3.4 · Creado por Ismael Bigio</footer>
+<footer>Versión 1.3.5 · Creado por Ismael Bigio</footer>
 
 <script>
-var kiaModels={
-"Forte":years("5W-20","0W-20"),
-"Forte5":years("5W-20","0W-20"),
-"Soul":years("5W-20","0W-20"),
-"Rio":years("5W-20","5W-20"),
-"Rio5":years("5W-20","5W-20"),
+const kiaModels={
+"Forte":oil("5W-20","0W-20"),
+"Forte5":oil("5W-20","0W-20"),
+"Soul":oil("5W-20","0W-20"),
+"Rio":oil("5W-20","5W-20"),
+"Rio5":oil("5W-20","5W-20"),
 "K4":{2024:"0W-20",2025:"0W-20",2026:"0W-20"},
-"Optima":years("5W-20","0W-20"),
-"K5":years("5W-20","0W-20"),
-"Sportage":years("5W-20","0W-20"),
-"Sorento":years("5W-20","0W-20"),
-"Telluride":years("5W-30","5W-30"),
-"Niro":years("0W-20","0W-20"),
-"Niro EV":years("0W-20","0W-20"),
-"Seltos":years("0W-20","0W-20"),
-"Carnival":years("0W-20","0W-20"),
-"Cadenza":years("5W-20","5W-20"),
-"Stinger":years("5W-30","5W-30"),
-"EV6":years("0W-20","0W-20")
+"Optima":oil("5W-20","0W-20"),
+"K5":oil("5W-20","0W-20"),
+"Sportage":oil("5W-20","0W-20"),
+"Sorento":oil("5W-20","0W-20"),
+"Telluride":oil("5W-30","5W-30"),
+"Niro":oil("0W-20","0W-20"),
+"Seltos":oil("0W-20","0W-20"),
+"Carnival":oil("0W-20","0W-20"),
+"Cadenza":oil("5W-20","5W-20"),
+"Stinger":oil("5W-30","5W-30"),
+"EV6":oil("0W-20","0W-20")
 };
 
-var nissanModels={
-"Versa":years("5W-30","0W-20"),
-"Versa Note":years("5W-30","0W-20"),
-"Sentra":years("5W-30","0W-20"),
-"Altima":years("0W-20","0W-20"),
-"Maxima":years("5W-30","5W-30"),
-"Rogue":years("5W-30","0W-20"),
-"Rogue Sport":years("5W-30","0W-20"),
-"Murano":years("5W-30","5W-30"),
-"Pathfinder":years("5W-30","0W-20"),
-"Frontier":years("5W-30","5W-30"),
-"Titan":years("5W-30","5W-30"),
-"Kicks":years("0W-20","0W-20"),
-"Juke":years("5W-30","5W-30"),
-"Armada":years("5W-30","5W-30"),
-"Leaf":years("0W-20","0W-20"),
-"NV200":years("5W-30","5W-30")
+const nissanModels={
+"Versa":oil("5W-30","0W-20"),
+"Versa Note":oil("5W-30","0W-20"),
+"Sentra":oil("5W-30","0W-20"),
+"Altima":oil("0W-20","0W-20"),
+"Maxima":oil("5W-30","5W-30"),
+"Rogue":oil("5W-30","0W-20"),
+"Rogue Sport":oil("5W-30","0W-20"),
+"Murano":oil("5W-30","5W-30"),
+"Pathfinder":oil("5W-30","0W-20"),
+"Frontier":oil("5W-30","5W-30"),
+"Titan":oil("5W-30","5W-30"),
+"Kicks":oil("0W-20","0W-20"),
+"Juke":oil("5W-30","5W-30"),
+"Armada":oil("5W-30","5W-30"),
+"Leaf":oil("0W-20","0W-20"),
+"NV200":oil("5W-30","5W-30")
 };
 
-function years(oldOil,newOil){
- let o={};for(let y=2015;y<=2026;y++)
- o[y]=(y<2021?oldOil:newOil);return o;
+function oil(oldOil,newOil){
+ let obj={};
+ for(let y=2015;y<=2026;y++){
+   obj[y]=(y<2021?oldOil:newOil);
+ }
+ return obj;
 }
 
 function loadModels(){
- let b=brand.value,m=model,y=year;
- m.innerHTML='<option>Modelo</option>';
- y.innerHTML='<option>Año</option>';
- let d=b.value=="kia"?kiaModels:nissanModels;
- for(let k in d)m.innerHTML+=`<option>${k}</option>`;
+ model.innerHTML='<option value="">Modelo</option>';
+ year.innerHTML='<option value="">Año</option>';
+ const data=brand.value==="kia"?kiaModels:nissanModels;
+ for(const m in data){
+   model.innerHTML+=`<option value="${m}">${m}</option>`;
+ }
 }
 
 function loadYears(){
- let d=brand.value=="kia"?kiaModels:nissanModels;
- year.innerHTML='<option>Año</option>';
- for(let y in d[model.value])year.innerHTML+=`<option>${y}</option>`;
+ year.innerHTML='<option value="">Año</option>';
+ const data=brand.value==="kia"?kiaModels:nissanModels;
+ const years=data[model.value];
+ for(const y in years){
+   year.innerHTML+=`<option value="${y}">${y}</option>`;
+ }
 }
 
 function buscarAceite(){
- let d=brand.value=="kia"?kiaModels:nissanModels;
- resultado.innerHTML="Aceite recomendado: <strong>"+d[model.value][year.value]+"</strong>";
+ const data=brand.value==="kia"?kiaModels:nissanModels;
+ resultado.innerHTML=
+ "Aceite recomendado: <strong>"+data[model.value][year.value]+"</strong>";
  correctionBox.style.display="block";
 }
 </script>
