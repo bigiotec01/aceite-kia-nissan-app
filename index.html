@@ -8,17 +8,20 @@
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        h1 { text-align:center; color:#3da9fc; margin-bottom:5px; font-size: 24px; }
         
-        /* Contenedor de logo ajustado para no tapar el título */
+        /* Título más compacto */
+        h1 { text-align:center; color:#3da9fc; margin-bottom:5px; font-size: 22px; }
+        
+        /* Contenedor de logo más pequeño y centrado */
         #logoContainer { 
-            height: 50px; 
+            height: 40px; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            margin-bottom: 15px; 
+            margin-bottom: 10px; 
         }
-        svg { width: 100px; height: auto; transition: 0.3s; }
+        /* Tamaño de logo reducido para evitar superposición */
+        svg { width: 80px; height: auto; transition: 0.3s; }
 
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button, textarea { 
@@ -29,7 +32,7 @@
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
         button:active { transform: scale(0.97); }
         .btn-green { background:#2ecc71; color: white; }
-        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 14px; }
+        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 13px; padding: 10px; }
         
         #resultado { 
             background:#161a20; padding:20px; margin-top:18px; 
@@ -75,7 +78,7 @@
         <button class="btn-green" onclick="guardarNota()">GUARDAR NOTA</button>
     </div>
 
-    <div class="card" style="border-color: #3da9fc;">
+    <div class="card" style="border-color: #3da9fc; padding: 10px;">
         <button class="btn-update" onclick="checkUpdates()">🔄 BUSCAR ACTUALIZACIONES</button>
     </div>
 
@@ -89,7 +92,7 @@
 <script>
 const logos = {
     kia: `<svg viewBox="0 0 100 25" xmlns="http://www.w3.org/2000/svg"><path d="M25 0l-7 13.5L11 0H0l12.5 25L25 0zm25 0h-11v25h11V0zm39 0h-11l-12.5 25H53l12.5-25h11l12.5 25H100z" fill="#BB162B"/></svg>`,
-    nissan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#0f1115" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
+    nissan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#1c1f26" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
 };
 
 function oilData(v1, q1, v2, q2) {
@@ -234,7 +237,7 @@ function checkUpdates() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(reg => {
             if (reg) {
-                reg.update().then(() => alert("Buscando cambios..."));
+                reg.update().then(() => alert("Buscando cambios en el servidor..."));
             }
         });
     }
