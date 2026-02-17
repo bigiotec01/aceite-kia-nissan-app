@@ -1,5 +1,5 @@
-const CACHE_NAME = 'oil-guide-v2.3-force';
-const assets = ['/', '/index.html', '/manifest.json'];
+const CACHE_NAME = 'oil-guide-v2.3-final';
+const assets = ['/', 'index.html', 'manifest.json'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
