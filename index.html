@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.0</title>
+    <title>Oil Guide Pro v2.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
         h1 { text-align:center; color:#3da9fc; margin-bottom:20px; font-size: 26px; }
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
-        select, button, input, textarea { 
+        select, button, textarea { 
             width:100%; padding:14px; margin-top:10px; font-size:16px; 
             border-radius:10px; border:none; box-sizing: border-box; 
         }
-        select, input, textarea { background:#2a2e38; color:#fff; border: 1px solid #444; }
+        select, textarea { background:#2a2e38; color:#fff; border: 1px solid #444; }
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
         button:active { transform: scale(0.97); }
         .btn-green { background:#2ecc71; color: white; }
@@ -58,15 +58,9 @@
 
     <div id="resultado"></div>
 
-    <div id="calcBox" class="card" style="display:none;">
-        <h3 style="margin-top:0; color:#3da9fc; font-size:18px;">📅 Próximo Servicio</h3>
-        <input type="number" id="kmActual" placeholder="KM Actual" oninput="calcKM()">
-        <p id="proximoKM" style="font-weight:bold; color:#2ecc71; margin-top:10px;"></p>
-    </div>
-
     <div id="correctionBox" class="card" style="display:none;">
         <h3 style="margin-top:0; font-size:16px;">📝 Notas Técnicas</h3>
-        <textarea id="note" placeholder="Ej: Usa filtro PH6607..."></textarea>
+        <textarea id="note" placeholder="Ej: Revisar empaque del tapón..."></textarea>
         <button class="btn-green" onclick="guardarNota()">GUARDAR NOTA</button>
     </div>
 
@@ -75,7 +69,7 @@
         <div id="listaHistorial"></div>
     </div>
 
-    <footer>Versión 2.0 · Ismael Bigio</footer>
+    <footer>Versión 2.1 · Ismael Bigio</footer>
 
 <script>
 function oilData(v1, q1, v2, q2) {
@@ -86,7 +80,6 @@ function oilData(v1, q1, v2, q2) {
     return obj;
 }
 
-// RESTAURADA TODA LA DATA DE KIA
 const kiaData = {
     "Cadenza": oilData("5W-20", "5.1 qts", "5W-20", "5.1 qts"),
     "Carnival": oilData("0W-20", "6.5 qts", "0W-20", "6.5 qts"),
@@ -107,7 +100,6 @@ const kiaData = {
     "Telluride": oilData("5W-30", "6.5 qts", "5W-30", "6.5 qts")
 };
 
-// RESTAURADA TODA LA DATA DE NISSAN
 const nissanData = {
     "Altima": oilData("0W-20", "5.1 qts", "0W-20", "5.1 qts"),
     "Armada": oilData("5W-30", "6.9 qts", "5W-30", "6.9 qts"),
@@ -127,7 +119,6 @@ const nissanData = {
     "Versa Note": oilData("5W-30", "3.7 qts", "0W-20", "4.2 qts")
 };
 
-// ... (Funciones de control loadModels, loadYears, buscarAceite, etc. se mantienen igual)
 function loadModels() {
     const brand = document.getElementById("brand").value;
     const modelDropdown = document.getElementById("model");
@@ -172,18 +163,9 @@ function buscarAceite() {
         <span class="data-value">${info.qty}</span>
         ${savedNote ? `<div style="margin-top:15px; color:#2ecc71; font-size:14px; border-top:1px solid #333; padding-top:10px;"><strong>Nota:</strong> ${savedNote}</div>` : ''}
     `;
-    document.getElementById("calcBox").style.display = "block";
     document.getElementById("correctionBox").style.display = "block";
     document.getElementById("note").value = savedNote;
     agregarHistorial(b, m, y);
-}
-
-function calcKM() {
-    const km = document.getElementById("kmActual").value;
-    if (km) {
-        const proximo = parseInt(km) + 5000;
-        document.getElementById("proximoKM").innerText = `Próximo cambio: ${proximo.toLocaleString()} KM`;
-    } else { document.getElementById("proximoKM").innerText = ""; }
 }
 
 function guardarNota() {
