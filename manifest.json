@@ -2,7 +2,7 @@
   "name": "Oil Guide Pro",
   "short_name": "OilGuide",
   "description": "Guía profesional de lubricantes para KIA y Nissan",
-  "start_url": "/",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0f1115",
   "theme_color": "#3da9fc",
