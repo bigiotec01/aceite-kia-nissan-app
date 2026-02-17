@@ -1,23 +1,30 @@
-const CACHE_NAME = "oil-guide-v1.4";
+const CACHE_NAME = 'oil-guide-v2.2';
 const assets = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icon-192.png",
-  "./icon-512.jpg"
+  '/',
+  '/index.html',
+  '/manifest.json'
 ];
 
-// Instalar y cachear recursos
-self.addEventListener("install", event => {
+// Instalación y limpieza de caches antiguas
+self.addEventListener('install', event => {
+  self.skipWaiting(); // Fuerza al SW nuevo a tomar el control
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(assets);
+    caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
+  );
+});
+
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key)) // Borra versiones viejas
+      );
     })
   );
 });
 
-// Responder desde caché o red
-self.addEventListener("fetch", event => {
+self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
