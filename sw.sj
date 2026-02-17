@@ -5,9 +5,8 @@ const assets = [
   '/manifest.json'
 ];
 
-// Instalación y limpieza de caches antiguas
 self.addEventListener('install', event => {
-  self.skipWaiting(); // Fuerza al SW nuevo a tomar el control
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
   );
@@ -18,7 +17,7 @@ self.addEventListener('activate', event => {
     caches.keys().then(keys => {
       return Promise.all(
         keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key)) // Borra versiones viejas
+            .map(key => caches.delete(key))
       );
     })
   );
