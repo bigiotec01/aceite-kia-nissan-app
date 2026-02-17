@@ -17,17 +17,19 @@
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
         button:active { transform: scale(0.98); opacity: 0.8; }
         #resultado { 
-            background:#161a20; padding:16px; margin-top:18px; 
+            background:#161a20; padding:20px; margin-top:18px; 
             border-radius:12px; font-size:18px; border-left: 5px solid #3da9fc;
-            display: none;
+            display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
+        .data-label { color: #888; font-size: 14px; display: block; margin-top: 8px; }
+        .data-value { color: #3da9fc; font-weight: bold; font-size: 20px; }
         #correctionBox { display:none; margin-top:14px; }
         footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.5; }
     </style>
 </head>
 <body>
 
-    <h1>🛢️ Oil Guide</h1>
+    <h1>🛢️ Oil Guide Pro</h1>
 
     <select id="brand" onchange="loadModels()">
         <option value="">-- Seleccionar Marca --</option>
@@ -52,79 +54,63 @@
         <button onclick="guardarNota()" style="background:#2ecc71;">GUARDAR NOTA</button>
     </div>
 
-    <footer>Versión 1.4 · Ismael Bigio</footer>
+    <footer>Versión 1.5 · Ismael Bigio</footer>
 
 <script>
-// Registro de Service Worker
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(err => console.log("Error SW:", err));
 }
 
-// Función generadora de datos de 2015 a 2026
-function oil(oldOil, newOil) {
+// Nueva función generadora con Cantidades (Capacidad aproximada)
+function oilData(v1, q1, v2, q2) {
     const obj = {};
-    for (let y = 2015; y <= 2026; y++) { obj[y] = (y < 2021 ? oldOil : newOil); }
+    for (let y = 2015; y <= 2026; y++) { 
+        if (y < 2021) {
+            obj[y] = { vis: v1, qty: q1 };
+        } else {
+            obj[y] = { vis: v2, qty: q2 };
+        }
+    }
     return obj;
 }
 
-// Base de datos completa KIA
 const kiaData = {
-    "Cadenza": oil("5W-20", "5W-20"),
-    "Carnival": oil("0W-20", "0W-20"),
-    "EV6": oil("0W-20", "0W-20"),
-    "Forte": oil("5W-20", "0W-20"),
-    "Forte5": oil("5W-20", "0W-20"),
-    "K4": { 2024: "0W-20", 2025: "0W-20", 2026: "0W-20" },
-    "K5": oil("5W-20", "0W-20"),
-    "Niro": oil("0W-20", "0W-20"),
-    "Optima": oil("5W-20", "0W-20"),
-    "Rio": oil("5W-20", "5W-20"),
-    "Rio5": oil("5W-20", "5W-20"),
-    "Seltos": oil("0W-20", "0W-20"),
-    "Sorento": oil("5W-20", "0W-20"),
-    "Soul": oil("5W-20", "0W-20"),
-    "Sportage": oil("5W-20", "0W-20"),
-    "Stinger": oil("5W-30", "5W-30"),
-    "Telluride": oil("5W-30", "5W-30")
+    "Forte": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "Rio": oilData("5W-20", "3.5 qts", "5W-20", "3.7 qts"),
+    "Sportage": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"),
+    "Sorento": oilData("5W-20", "6.1 qts", "0W-20", "6.1 qts"),
+    "Soul": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "Telluride": oilData("5W-30", "6.5 qts", "5W-30", "6.5 qts"),
+    "Seltos": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "K5": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"),
+    "Carnival": oilData("0W-20", "6.5 qts", "0W-20", "6.5 qts")
 };
 
-// Base de datos completa NISSAN
 const nissanData = {
-    "Altima": oil("0W-20", "0W-20"),
-    "Armada": oil("5W-30", "5W-30"),
-    "Frontier": oil("5W-30", "5W-30"),
-    "Juke": oil("5W-30", "5W-30"),
-    "Kicks": oil("0W-20", "0W-20"),
-    "Leaf": oil("0W-20", "0W-20"),
-    "Maxima": oil("5W-30", "5W-30"),
-    "Murano": oil("5W-30", "5W-30"),
-    "NV200": oil("5W-30", "5W-30"),
-    "Pathfinder": oil("5W-30", "0W-20"),
-    "Rogue": oil("5W-30", "0W-20"),
-    "Rogue Sport": oil("5W-30", "0W-20"),
-    "Sentra": oil("5W-30", "0W-20"),
-    "Titan": oil("5W-30", "5W-30"),
-    "Versa": oil("5W-30", "0W-20"),
-    "Versa Note": oil("5W-30", "0W-20")
+    "Altima": oilData("0W-20", "5.1 qts", "0W-20", "5.1 qts"),
+    "Sentra": oilData("5W-30", "4.2 qts", "0W-20", "4.4 qts"),
+    "Versa": oilData("5W-30", "3.7 qts", "0W-20", "4.2 qts"),
+    "Rogue": oilData("5W-30", "4.9 qts", "0W-20", "5.1 qts"),
+    "Frontier": oilData("5W-30", "5.4 qts", "5W-30", "5.6 qts"),
+    "Pathfinder": oilData("5W-30", "5.1 qts", "0W-20", "5.4 qts"),
+    "Kicks": oilData("0W-20", "4.4 qts", "0W-20", "4.4 qts"),
+    "Titan": oilData("5W-30", "6.9 qts", "5W-30", "6.9 qts"),
+    "Armada": oilData("5W-30", "6.9 qts", "5W-30", "6.9 qts")
 };
 
 function loadModels() {
     const brand = document.getElementById("brand").value;
     const modelDropdown = document.getElementById("model");
     const yearDropdown = document.getElementById("year");
-    
     modelDropdown.innerHTML = '<option value="">-- Modelo --</option>';
     yearDropdown.innerHTML = '<option value="">-- Año --</option>';
     document.getElementById("resultado").style.display = "none";
     document.getElementById("correctionBox").style.display = "none";
-
     if (!brand) return;
-
     const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
     models.sort().forEach(m => {
         let el = document.createElement("option");
-        el.textContent = m;
-        el.value = m;
+        el.textContent = m; el.value = m;
         modelDropdown.appendChild(el);
     });
 }
@@ -134,14 +120,11 @@ function loadYears() {
     const model = document.getElementById("model").value;
     const yearDropdown = document.getElementById("year");
     yearDropdown.innerHTML = '<option value="">-- Año --</option>';
-
     if (!model) return;
-
     const data = brand === "kia" ? kiaData[model] : nissanData[model];
     Object.keys(data).forEach(y => {
         let el = document.createElement("option");
-        el.textContent = y;
-        el.value = y;
+        el.textContent = y; el.value = y;
         yearDropdown.appendChild(el);
     });
 }
@@ -154,15 +137,21 @@ function buscarAceite() {
 
     if (!y) { alert("Por favor selecciona todos los campos"); return; }
 
-    const data = b === "kia" ? kiaData[m][y] : nissanData[m][y];
+    const info = b === "kia" ? kiaData[m][y] : nissanData[m][y];
     const storageKey = `note_${b}_${m}_${y}`;
     const savedNote = localStorage.getItem(storageKey) || "";
 
     resDiv.style.display = "block";
-    resDiv.innerHTML = `Aceite recomendado: <strong style="color:#3da9fc; font-size:22px;">${data}</strong>`;
+    resDiv.innerHTML = `
+        <span class="data-label">VISCOSIDAD RECOMENDADA:</span>
+        <span class="data-value">${info.vis}</span>
+        <br>
+        <span class="data-label">CANTIDAD (CAPACIDAD):</span>
+        <span class="data-value">${info.qty}</span>
+    `;
     
     if (savedNote) {
-        resDiv.innerHTML += `<div style="margin-top:10px; padding-top:10px; border-top:1px solid #333; font-size:14px; color:#2ecc71;">Nota guardada: ${savedNote}</div>`;
+        resDiv.innerHTML += `<div style="margin-top:15px; padding-top:10px; border-top:1px solid #333; font-size:14px; color:#2ecc71;"><strong>Nota:</strong> ${savedNote}</div>`;
     }
 
     document.getElementById("note").value = savedNote;
@@ -174,10 +163,9 @@ function guardarNota() {
     const m = document.getElementById("model").value;
     const y = document.getElementById("year").value;
     const text = document.getElementById("note").value;
-    
     if (!y) return;
     localStorage.setItem(`note_${b}_${m}_${y}`, text);
-    alert("¡Nota técnica guardada!");
+    alert("¡Nota guardada!");
     buscarAceite();
 }
 </script>
