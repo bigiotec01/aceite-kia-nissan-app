@@ -8,20 +8,41 @@
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        h1 { text-align:center; color:#3da9fc; margin-bottom:10px; font-size: 26px; }
-        #logoContainer { height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 15px; }
-        svg { width: 140px; height: auto; }
+        h1 { text-align:center; color:#3da9fc; margin-bottom:5px; font-size: 24px; }
+        
+        /* Contenedor de logo ajustado para no tapar el título */
+        #logoContainer { 
+            height: 50px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 15px; 
+        }
+        svg { width: 100px; height: auto; transition: 0.3s; }
+
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
-        select, button, textarea { width:100%; padding:14px; margin-top:10px; font-size:16px; border-radius:10px; border:none; box-sizing: border-box; }
+        select, button, textarea { 
+            width:100%; padding:14px; margin-top:10px; font-size:16px; 
+            border-radius:10px; border:none; box-sizing: border-box; 
+        }
         select, textarea { background:#2a2e38; color:#fff; border: 1px solid #444; }
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
         button:active { transform: scale(0.97); }
         .btn-green { background:#2ecc71; color: white; }
-        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; }
-        #resultado { background:#161a20; padding:20px; margin-top:18px; border-radius:12px; border-left: 6px solid #3da9fc; display: none; }
+        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 14px; }
+        
+        #resultado { 
+            background:#161a20; padding:20px; margin-top:18px; 
+            border-radius:12px; border-left: 6px solid #3da9fc;
+            display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
         .data-label { color: #888; font-size: 13px; display: block; margin-top: 10px; }
         .data-value { color: #3da9fc; font-weight: bold; font-size: 22px; }
-        .hist-item { background: #252932; padding: 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; border-left: 3px solid #3da9fc; }
+        
+        .hist-item { 
+            background: #252932; padding: 12px; border-radius: 8px; 
+            margin-bottom: 8px; font-size: 14px; border-left: 3px solid #3da9fc;
+        }
         footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.4; padding-bottom: 20px; }
     </style>
 </head>
@@ -50,7 +71,7 @@
 
     <div id="correctionBox" class="card" style="display:none;">
         <h3 style="margin-top:0; font-size:16px;">📝 Notas Técnicas</h3>
-        <textarea id="note" placeholder="Ej: Revisar empaque..."></textarea>
+        <textarea id="note" placeholder="Ej: Filtro PH6607..."></textarea>
         <button class="btn-green" onclick="guardarNota()">GUARDAR NOTA</button>
     </div>
 
@@ -200,7 +221,9 @@ if ('serviceWorker' in navigator) {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    if (confirm("¡Nueva actualización disponible!")) { window.location.reload(); }
+                    if (confirm("¡Nueva versión disponible! ¿Actualizar ahora?")) {
+                        window.location.reload();
+                    }
                 }
             });
         });
@@ -210,7 +233,9 @@ if ('serviceWorker' in navigator) {
 function checkUpdates() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(reg => {
-            if (reg) { reg.update().then(() => alert("Buscando cambios...")); }
+            if (reg) {
+                reg.update().then(() => alert("Buscando cambios..."));
+            }
         });
     }
 }
