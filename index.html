@@ -3,12 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.2</title>
+    <title>Oil Guide Pro v2.3</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        h1 { text-align:center; color:#3da9fc; margin-bottom:20px; font-size: 26px; }
+        h1 { text-align:center; color:#3da9fc; margin-bottom:10px; font-size: 26px; }
+        
+        /* Contenedor de Logo */
+        #logoContainer { 
+            height: 60px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 20px;
+            transition: all 0.5s ease;
+        }
+        svg { width: 120px; height: auto; fill: white; opacity: 0.8; }
+
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button, textarea { 
             width:100%; padding:14px; margin-top:10px; font-size:16px; 
@@ -38,6 +50,9 @@
 <body>
 
     <h1>🛢️ Oil Guide Pro</h1>
+
+    <div id="logoContainer">
+        </div>
 
     <div class="card">
         <select id="brand" onchange="loadModels()">
@@ -71,9 +86,21 @@
         <div id="listaHistorial"></div>
     </div>
 
-    <footer>Versión 2.2 · Ismael Bigio</footer>
+    <footer>Versión 2.3 · Ismael Bigio</footer>
 
 <script>
+// Logos en formato SVG
+const logos = {
+    kia: `<svg viewBox="0 0 100 25"><path d="M25 0l-7 13.5L11 0H0l12.5 25L25 0zm25 0h-11v25h11V0zm39 0h-11l-12.5 25H53l12.5-25h11l12.5 25H100z"/></svg>`,
+    nissan: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#0f1115" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="12" text-anchor="middle" fill="white">NISSAN</text></svg>`
+};
+
+function updateLogo() {
+    const brand = document.getElementById("brand").value;
+    const container = document.getElementById("logoContainer");
+    container.innerHTML = logos[brand] || "";
+}
+
 function oilData(v1, q1, v2, q2) {
     const obj = {};
     for (let y = 2015; y <= 2026; y++) { 
@@ -126,6 +153,7 @@ function loadModels() {
     const brand = document.getElementById("brand").value;
     const modelDropdown = document.getElementById("model");
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
+    updateLogo(); // Cambia el logo al seleccionar marca
     if (!brand) return;
     const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
     models.sort().forEach(m => {
@@ -195,7 +223,6 @@ function renderHistorial() {
     document.getElementById("listaHistorial").innerHTML = hist.map(h => `<div class="hist-item">${h}</div>`).join('');
 }
 
-// Lógica de Service Worker y Actualización
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').then(reg => {
         reg.addEventListener('updatefound', () => {
