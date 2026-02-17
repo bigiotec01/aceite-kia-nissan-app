@@ -3,25 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.3</title>
+    <title>Oil Guide Pro v2.3.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
+        h1 { text-align:center; color:#3da9fc; margin-bottom:5px; font-size: 20px; }
         
-        /* Título más compacto */
-        h1 { text-align:center; color:#3da9fc; margin-bottom:5px; font-size: 22px; }
-        
-        /* Contenedor de logo más pequeño y centrado */
+        /* Contenedor y logos mini para evitar que tapen el texto */
         #logoContainer { 
-            height: 40px; 
+            height: 35px; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             margin-bottom: 10px; 
         }
-        /* Tamaño de logo reducido para evitar superposición */
-        svg { width: 80px; height: auto; transition: 0.3s; }
+        svg { max-width: 65px; max-height: 30px; transition: 0.3s; }
 
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button, textarea { 
@@ -32,7 +29,7 @@
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
         button:active { transform: scale(0.97); }
         .btn-green { background:#2ecc71; color: white; }
-        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 13px; padding: 10px; }
+        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 12px; padding: 8px; }
         
         #resultado { 
             background:#161a20; padding:20px; margin-top:18px; 
@@ -79,15 +76,15 @@
     </div>
 
     <div class="card" style="border-color: #3da9fc; padding: 10px;">
-        <button class="btn-update" onclick="checkUpdates()">🔄 BUSCAR ACTUALIZACIONES</button>
+        <button class="btn-update" onclick="checkUpdates()">🔄 ACTUALIZAR APP</button>
     </div>
 
     <div id="historialSection">
-        <h3 style="color:#888; font-size:16px;">Consultas Recientes</h3>
+        <h3 style="color:#888; font-size:15px;">Consultas Recientes</h3>
         <div id="listaHistorial"></div>
     </div>
 
-    <footer>Versión 2.3 · Ismael Bigio</footer>
+    <footer>Versión 2.3.1 · Ismael Bigio</footer>
 
 <script>
 const logos = {
@@ -224,7 +221,7 @@ if ('serviceWorker' in navigator) {
             const newWorker = reg.installing;
             newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    if (confirm("¡Nueva versión disponible! ¿Actualizar ahora?")) {
+                    if (confirm("¡Nueva versión lista! ¿Actualizar?")) {
                         window.location.reload();
                     }
                 }
@@ -237,7 +234,7 @@ function checkUpdates() {
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration().then(reg => {
             if (reg) {
-                reg.update().then(() => alert("Buscando cambios en el servidor..."));
+                reg.update().then(() => alert("Buscando actualización..."));
             }
         });
     }
