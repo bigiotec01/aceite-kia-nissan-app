@@ -1,4 +1,4 @@
-const CACHE_NAME = 'oil-guide-v2.3-final-logos';
+const CACHE_NAME = 'oil-guide-v2.3.1-fix';
 const assets = ['/', 'index.html', 'manifest.json'];
 
 self.addEventListener('install', event => {
