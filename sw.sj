@@ -1,10 +1,16 @@
-const CACHE_NAME = 'oil-guide-v2.3.1-fix';
-const assets = ['/', 'index.html', 'manifest.json'];
+const CACHE_NAME = 'oil-guide-v2.4-ULTIMATE';
+const assets = [
+  './index.html',
+  './manifest.json',
+  './sw.js'
+];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(assets))
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(assets);
+    })
   );
 });
 
@@ -21,6 +27,8 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(response => response || fetch(event.request))
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
   );
 });
