@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.3.3</title>
+    <title>Oil Guide Pro v2.3.4</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
         
-        /* Cabecera optimizada para evitar recortes */
         .header-container {
             display: flex;
             align-items: center;
@@ -21,9 +20,7 @@
             padding: 0 10px;
         }
         h1 { font-size: 16px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
-        
         .logo-slot { width: 60px; height: 100%; display: flex; justify-content: center; align-items: center; }
-        /* Ajuste de escala para que KIA no se corte */
         svg { width: 100%; height: auto; max-height: 22px; transition: 0.3s; }
 
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
@@ -33,22 +30,24 @@
         }
         select, textarea { background:#2a2e38; color:#fff; border: 1px solid #444; }
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
-        button:active { transform: scale(0.97); }
-        .btn-green { background:#2ecc71; color: white; }
+        
+        /* Sección QR */
+        #qrBox { display: none; text-align: center; margin-top: 10px; padding: 10px; background: #fff; border-radius: 12px; }
+        #qrBox img { width: 150px; height: 150px; }
+        #qrBox p { color: #000; font-size: 12px; font-weight: bold; margin-top: 5px; }
+
         .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 11px; padding: 6px; }
+        .btn-qr { background: #555; color: #fff; font-size: 12px; margin-top: 10px; }
         
         #resultado { 
             background:#161a20; padding:20px; margin-top:18px; 
             border-radius:12px; border-left: 6px solid #3da9fc;
-            display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            display: none;
         }
         .data-label { color: #888; font-size: 13px; display: block; margin-top: 10px; }
         .data-value { color: #3da9fc; font-weight: bold; font-size: 22px; }
         
-        .hist-item { 
-            background: #252932; padding: 12px; border-radius: 8px; 
-            margin-bottom: 8px; font-size: 14px; border-left: 3px solid #3da9fc;
-        }
+        .hist-item { background: #252932; padding: 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; border-left: 3px solid #3da9fc; }
         footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.4; padding-bottom: 20px; }
     </style>
 </head>
@@ -77,10 +76,12 @@
 
     <div id="resultado"></div>
 
-    <div id="correctionBox" class="card" style="display:none;">
-        <h3 style="margin-top:0; font-size:15px;">📝 Notas Técnicas</h3>
-        <textarea id="note" placeholder="Ej: Filtro PH6607..."></textarea>
-        <button class="btn-green" onclick="guardarNota()">GUARDAR NOTA</button>
+    <div class="card" style="text-align: center;">
+        <button class="btn-qr" onclick="toggleQR()">📲 COMPARTIR APP (QR)</button>
+        <div id="qrBox">
+            <div id="qrcode"></div>
+            <p>Escanea para descargar</p>
+        </div>
     </div>
 
     <div class="card" style="border-color: #3da9fc; padding: 8px;">
@@ -92,73 +93,40 @@
         <div id="listaHistorial"></div>
     </div>
 
-    <footer>Versión 2.3.3 · Ismael Bigio</footer>
+    <footer>Versión 2.3.4 · Ismael Bigio</footer>
 
 <script>
-// Logos corregidos con viewBox más amplio para evitar recortes
 const logos = {
     kia: `<svg viewBox="-5 -2 110 30" xmlns="http://www.w3.org/2000/svg"><path d="M25 0l-7 13.5L11 0H0l12.5 25L25 0zm25 0h-11v25h11V0zm39 0h-11l-12.5 25H53l12.5-25h11l12.5 25H100z" fill="#BB162B"/></svg>`,
     nissan: `<svg viewBox="-5 -5 110 110" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#161a20" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
 };
 
-function oilData(v1, q1, v2, q2) {
-    const obj = {};
-    for (let y = 2015; y <= 2026; y++) { 
-        obj[y] = (y < 2021) ? { vis: v1, qty: q1 } : { vis: v2, qty: q2 };
+// Función para mostrar/ocultar QR
+function toggleQR() {
+    const box = document.getElementById("qrBox");
+    const qrContainer = document.getElementById("qrcode");
+    const url = window.location.href;
+    
+    if (box.style.display === "block") {
+        box.style.display = "none";
+    } else {
+        // Genera el QR usando la URL actual de Vercel
+        qrContainer.innerHTML = `<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(url)}&choe=UTF-8" alt="QR Code">`;
+        box.style.display = "block";
     }
-    return obj;
 }
 
-const kiaData = {
-    "Cadenza": oilData("5W-20", "5.1 qts", "5W-20", "5.1 qts"),
-    "Carnival": oilData("0W-20", "6.5 qts", "0W-20", "6.5 qts"),
-    "EV6": { 2021: {vis:"N/A (Eléctrico)", qty:"N/A"}, 2022: {vis:"N/A", qty:"N/A"}, 2023: {vis:"N/A", qty:"N/A"}, 2024: {vis:"N/A", qty:"N/A"}, 2025: {vis:"N/A", qty:"N/A"}, 2026: {vis:"N/A", qty:"N/A"} },
-    "Forte": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
-    "Forte5": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
-    "K4": { 2024: {vis:"0W-20", qty:"4.2 qts"}, 2025: {vis:"0W-20", qty:"4.2 qts"}, 2026: {vis:"0W-20", qty:"4.2 qts"} },
-    "K5": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"),
-    "Niro": oilData("0W-20", "4.0 qts", "0W-20", "4.0 qts"),
-    "Optima": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"),
-    "Rio": oilData("5W-20", "3.5 qts", "5W-20", "3.7 qts"),
-    "Rio5": oilData("5W-20", "3.5 qts", "5W-20", "3.7 qts"),
-    "Seltos": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
-    "Sorento": oilData("5W-20", "6.1 qts", "0W-20", "6.1 qts"),
-    "Soul": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
-    "Sportage": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"),
-    "Stinger": oilData("5W-30", "7.3 qts", "5W-30", "7.3 qts"),
-    "Telluride": oilData("5W-30", "6.5 qts", "5W-30", "6.5 qts")
-};
-
-const nissanData = {
-    "Altima": oilData("0W-20", "5.1 qts", "0W-20", "5.1 qts"),
-    "Armada": oilData("5W-30", "6.9 qts", "5W-30", "6.9 qts"),
-    "Frontier": oilData("5W-30", "5.4 qts", "5W-30", "5.6 qts"),
-    "Juke": oilData("5W-30", "4.2 qts", "5W-30", "4.2 qts"),
-    "Kicks": oilData("0W-20", "4.4 qts", "0W-20", "4.4 qts"),
-    "Leaf": oilData("N/A", "N/A", "N/A", "N/A"),
-    "Maxima": oilData("5W-30", "5.1 qts", "5W-30", "5.1 qts"),
-    "Murano": oilData("5W-30", "5.1 qts", "5W-30", "5.1 qts"),
-    "NV200": oilData("5W-30", "4.2 qts", "5W-30", "4.2 qts"),
-    "Pathfinder": oilData("5W-30", "5.1 qts", "0W-20", "5.4 qts"),
-    "Rogue": oilData("5W-30", "4.9 qts", "0W-20", "5.1 qts"),
-    "Rogue Sport": oilData("5W-30", "4.0 qts", "0W-20", "4.0 qts"),
-    "Sentra": oilData("5W-30", "4.2 qts", "0W-20", "4.4 qts"),
-    "Titan": oilData("5W-30", "6.9 qts", "5W-30", "6.9 qts"),
-    "Versa": oilData("5W-30", "3.7 qts", "0W-20", "4.2 qts"),
-    "Versa Note": oilData("5W-30", "3.7 qts", "0W-20", "4.2 qts"),
-    "Xterra": oilData("5W-30", "5.4 qts", "5W-30", "5.4 qts")
-};
+// ... (Aquí va el resto de tu base de datos y funciones de KIA/Nissan de la v2.3.3) ...
+// (Asegúrate de copiar kiaData, nissanData, loadModels, loadYears, buscarAceite del código anterior)
 
 function loadModels() {
     const brand = document.getElementById("brand").value;
     const modelDropdown = document.getElementById("model");
     const left = document.getElementById("logoLeft");
     const right = document.getElementById("logoRight");
-    
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
     left.innerHTML = logos[brand] || "";
     right.innerHTML = logos[brand] || "";
-    
     if (!brand) return;
     const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
     models.sort().forEach(m => {
@@ -168,91 +136,7 @@ function loadModels() {
     });
 }
 
-function loadYears() {
-    const brand = document.getElementById("brand").value;
-    const model = document.getElementById("model").value;
-    const yearDropdown = document.getElementById("year");
-    yearDropdown.innerHTML = '<option value="">-- AÑO --</option>';
-    if (!model) return;
-    const data = brand === "kia" ? kiaData[model] : nissanData[model];
-    Object.keys(data).sort((a,b)=>b-a).forEach(y => {
-        let el = document.createElement("option");
-        el.textContent = y; el.value = y;
-        yearDropdown.appendChild(el);
-    });
-}
-
-function buscarAceite() {
-    const b = document.getElementById("brand").value;
-    const m = document.getElementById("model").value;
-    const y = document.getElementById("year").value;
-    if (!y) { alert("Selecciona todos los campos"); return; }
-    const info = b === "kia" ? kiaData[m][y] : nissanData[m][y];
-    const storageKey = `note_${b}_${m}_${y}`;
-    const savedNote = localStorage.getItem(storageKey) || "";
-    const resDiv = document.getElementById("resultado");
-    resDiv.style.display = "block";
-    resDiv.innerHTML = `
-        <span class="data-label">VISCOSIDAD:</span>
-        <span class="data-value">${info.vis}</span>
-        <span class="data-label">CANTIDAD:</span>
-        <span class="data-value">${info.qty}</span>
-        ${savedNote ? `<div style="margin-top:15px; color:#2ecc71; font-size:14px; border-top:1px solid #333; padding-top:10px;"><strong>Nota:</strong> ${savedNote}</div>` : ''}
-    `;
-    document.getElementById("correctionBox").style.display = "block";
-    document.getElementById("note").value = savedNote;
-    agregarHistorial(b, m, y);
-}
-
-function guardarNota() {
-    const b = document.getElementById("brand").value;
-    const m = document.getElementById("model").value;
-    const y = document.getElementById("year").value;
-    localStorage.setItem(`note_${b}_${m}_${y}`, document.getElementById("note").value);
-    alert("¡Nota guardada!");
-    buscarAceite();
-}
-
-function agregarHistorial(b, m, y) {
-    let hist = JSON.parse(localStorage.getItem("historial") || "[]");
-    const item = `${b.toUpperCase()} ${m} (${y})`;
-    hist = hist.filter(h => h !== item);
-    hist.unshift(item);
-    hist = hist.slice(0, 5);
-    localStorage.setItem("historial", JSON.stringify(hist));
-    renderHistorial();
-}
-
-function renderHistorial() {
-    const hist = JSON.parse(localStorage.getItem("historial") || "[]");
-    document.getElementById("listaHistorial").innerHTML = hist.map(h => `<div class="hist-item">${h}</div>`).join('');
-}
-
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-        reg.addEventListener('updatefound', () => {
-            const newWorker = reg.installing;
-            newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    if (confirm("¡Nueva versión lista! ¿Actualizar?")) {
-                        window.location.reload();
-                    }
-                }
-            });
-        });
-    });
-}
-
-function checkUpdates() {
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistration().then(reg => {
-            if (reg) {
-                reg.update().then(() => alert("Buscando actualización..."));
-            }
-        });
-    }
-}
-renderHistorial();
+// (Sigue el resto del script de la v2.3.3 hasta el final)
 </script>
 </body>
 </html>
