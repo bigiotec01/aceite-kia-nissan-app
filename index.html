@@ -3,27 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.5</title>
+    <title>Oil Guide Pro v2.5.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        
-        /* Título centrado y simple */
         h1 { text-align:center; color:#3da9fc; margin: 20px 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
-        
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button { width:100%; padding:14px; margin-top:10px; font-size:16px; border-radius:10px; border:none; box-sizing: border-box; }
         select { background:#2a2e38; color:#fff; border: 1px solid #444; }
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; }
-        
         #resultado { background:#161a20; padding:20px; margin-top:18px; border-radius:12px; border-left: 6px solid #3da9fc; display: none; }
         .data-label { color: #888; font-size: 13px; display: block; margin-top: 10px; }
         .data-value { color: #3da9fc; font-weight: bold; font-size: 22px; }
-        
         #qrBox { display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 12px; text-align: center; }
         #qrBox img { width: 160px; height: 160px; margin: 0 auto; }
-        
         .btn-update { background:transparent; color:#3da9fc; border:1px solid #3da9fc; font-size: 11px; margin-top: 10px; padding: 8px; }
         footer { margin-top:40px; text-align:center; font-size:11px; opacity:0.4; padding-bottom: 20px; }
     </style>
@@ -59,7 +53,7 @@
 
     <button class="btn-update" onclick="forceUpdate()">🔄 RESETEAR CACHÉ / ACTUALIZAR</button>
 
-    <footer>Versión 2.5 · Ismael Bigio</footer>
+    <footer>Versión 2.5.1 · Ismael Bigio</footer>
 
 <script>
 function oilData(v1, q1, v2, q2) {
@@ -73,6 +67,7 @@ const kiaData = {
     "Carnival": oilData("0W-20", "6.5 qts", "0W-20", "6.5 qts"),
     "Forte": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
     "K4": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "Optima": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"), // AGREGADO
     "Rio": oilData("5W-20", "3.5 qts", "5W-20", "3.7 qts"),
     "Seltos": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
     "Sorento": oilData("5W-20", "6.1 qts", "0W-20", "6.1 qts"),
@@ -149,10 +144,7 @@ function forceUpdate() {
         });
     }
 }
-
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=2.5');
-}
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('./sw.js?v=2.5.1'); }
 </script>
 </body>
 </html>
