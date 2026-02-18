@@ -8,47 +8,28 @@
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        
         .header-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            height: 50px;
-            background: #161a20;
-            border-radius: 12px;
-            padding: 0 10px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 20px; height: 50px; background: #161a20;
+            border-radius: 12px; padding: 0 10px;
         }
         h1 { font-size: 16px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
-        .logo-slot { width: 60px; height: 100%; display: flex; justify-content: center; align-items: center; }
+        .logo-slot { width: 55px; height: 100%; display: flex; justify-content: center; align-items: center; }
         svg { width: 100%; height: auto; max-height: 22px; transition: 0.3s; }
-
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button, textarea { 
             width:100%; padding:14px; margin-top:10px; font-size:16px; 
             border-radius:10px; border:none; box-sizing: border-box; 
         }
         select, textarea { background:#2a2e38; color:#fff; border: 1px solid #444; }
-        button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
-        
-        /* Sección QR */
+        button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; }
         #qrBox { display: none; text-align: center; margin-top: 10px; padding: 10px; background: #fff; border-radius: 12px; }
-        #qrBox img { width: 150px; height: 150px; }
-        #qrBox p { color: #000; font-size: 12px; font-weight: bold; margin-top: 5px; }
-
-        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 11px; padding: 6px; }
-        .btn-qr { background: #555; color: #fff; font-size: 12px; margin-top: 10px; }
-        
-        #resultado { 
-            background:#161a20; padding:20px; margin-top:18px; 
-            border-radius:12px; border-left: 6px solid #3da9fc;
-            display: none;
-        }
+        #qrBox img { width: 140px; height: 140px; }
+        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; font-size: 11px; padding: 8px; }
+        #resultado { background:#161a20; padding:20px; margin-top:18px; border-radius:12px; border-left: 6px solid #3da9fc; display: none; }
         .data-label { color: #888; font-size: 13px; display: block; margin-top: 10px; }
         .data-value { color: #3da9fc; font-weight: bold; font-size: 22px; }
-        
-        .hist-item { background: #252932; padding: 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; border-left: 3px solid #3da9fc; }
-        footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.4; padding-bottom: 20px; }
+        footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.4; }
     </style>
 </head>
 <body>
@@ -77,20 +58,15 @@
     <div id="resultado"></div>
 
     <div class="card" style="text-align: center;">
-        <button class="btn-qr" onclick="toggleQR()">📲 COMPARTIR APP (QR)</button>
+        <button onclick="toggleQR()" style="background:#444; color:#fff; font-size:12px;">📲 COMPARTIR APP (QR)</button>
         <div id="qrBox">
             <div id="qrcode"></div>
-            <p>Escanea para descargar</p>
+            <p style="color:#000; font-size:11px; margin-top:5px; font-weight:bold;">Escanea para instalar</p>
         </div>
     </div>
 
-    <div class="card" style="border-color: #3da9fc; padding: 8px;">
-        <button class="btn-update" onclick="checkUpdates()">🔄 ACTUALIZAR APP</button>
-    </div>
-
-    <div id="historialSection">
-        <h3 style="color:#888; font-size:14px;">Consultas Recientes</h3>
-        <div id="listaHistorial"></div>
+    <div class="card" style="border-color: #3da9fc; padding: 10px;">
+        <button class="btn-update" onclick="checkUpdates()">🔄 FORZAR ACTUALIZACIÓN</button>
     </div>
 
     <footer>Versión 2.3.4 · Ismael Bigio</footer>
@@ -101,32 +77,44 @@ const logos = {
     nissan: `<svg viewBox="-5 -5 110 110" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#161a20" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
 };
 
-// Función para mostrar/ocultar QR
-function toggleQR() {
-    const box = document.getElementById("qrBox");
-    const qrContainer = document.getElementById("qrcode");
-    const url = window.location.href;
-    
-    if (box.style.display === "block") {
-        box.style.display = "none";
-    } else {
-        // Genera el QR usando la URL actual de Vercel
-        qrContainer.innerHTML = `<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(url)}&choe=UTF-8" alt="QR Code">`;
-        box.style.display = "block";
+function oilData(v1, q1, v2, q2) {
+    const obj = {};
+    for (let y = 2015; y <= 2026; y++) { 
+        obj[y] = (y < 2021) ? { vis: v1, qty: q1 } : { vis: v2, qty: q2 };
     }
+    return obj;
 }
 
-// ... (Aquí va el resto de tu base de datos y funciones de KIA/Nissan de la v2.3.3) ...
-// (Asegúrate de copiar kiaData, nissanData, loadModels, loadYears, buscarAceite del código anterior)
+const kiaData = {
+    "Cadenza": oilData("5W-20", "5.1 qts", "5W-20", "5.1 qts"),
+    "Carnival": oilData("0W-20", "6.5 qts", "0W-20", "6.5 qts"),
+    "Forte": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "K4": { 2024: {vis:"0W-20", qty:"4.2 qts"}, 2025: {vis:"0W-20", qty:"4.2 qts"}, 2026: {vis:"0W-20", qty:"4.2 qts"} },
+    "Rio": oilData("5W-20", "3.5 qts", "5W-20", "3.7 qts"),
+    "Seltos": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "Sorento": oilData("5W-20", "6.1 qts", "0W-20", "6.1 qts"),
+    "Soul": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
+    "Sportage": oilData("5W-20", "5.1 qts", "0W-20", "5.1 qts"),
+    "Telluride": oilData("5W-30", "6.5 qts", "5W-30", "6.5 qts")
+};
+
+const nissanData = {
+    "Altima": oilData("0W-20", "5.1 qts", "0W-20", "5.1 qts"),
+    "Frontier": oilData("5W-30", "5.4 qts", "5W-30", "5.6 qts"),
+    "Kicks": oilData("0W-20", "4.4 qts", "0W-20", "4.4 qts"),
+    "Pathfinder": oilData("5W-30", "5.1 qts", "0W-20", "5.4 qts"),
+    "Rogue": oilData("5W-30", "4.9 qts", "0W-20", "5.1 qts"),
+    "Sentra": oilData("5W-30", "4.2 qts", "0W-20", "4.4 qts"),
+    "Versa": oilData("5W-30", "3.7 qts", "0W-20", "4.2 qts"),
+    "Xterra": oilData("5W-30", "5.4 qts", "5W-30", "5.4 qts")
+};
 
 function loadModels() {
     const brand = document.getElementById("brand").value;
     const modelDropdown = document.getElementById("model");
-    const left = document.getElementById("logoLeft");
-    const right = document.getElementById("logoRight");
+    document.getElementById("logoLeft").innerHTML = logos[brand] || "";
+    document.getElementById("logoRight").innerHTML = logos[brand] || "";
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
-    left.innerHTML = logos[brand] || "";
-    right.innerHTML = logos[brand] || "";
     if (!brand) return;
     const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
     models.sort().forEach(m => {
@@ -136,7 +124,58 @@ function loadModels() {
     });
 }
 
-// (Sigue el resto del script de la v2.3.3 hasta el final)
+function loadYears() {
+    const brand = document.getElementById("brand").value;
+    const model = document.getElementById("model").value;
+    const yearDropdown = document.getElementById("year");
+    yearDropdown.innerHTML = '<option value="">-- AÑO --</option>';
+    if (!model) return;
+    const data = brand === "kia" ? kiaData[model] : nissanData[model];
+    Object.keys(data).sort((a,b)=>b-a).forEach(y => {
+        let el = document.createElement("option");
+        el.textContent = y; el.value = y;
+        yearDropdown.appendChild(el);
+    });
+}
+
+function buscarAceite() {
+    const b = document.getElementById("brand").value;
+    const m = document.getElementById("model").value;
+    const y = document.getElementById("year").value;
+    if (!y) return;
+    const info = b === "kia" ? kiaData[m][y] : nissanData[m][y];
+    const resDiv = document.getElementById("resultado");
+    resDiv.style.display = "block";
+    resDiv.innerHTML = `<span class="data-label">VISCOSIDAD:</span><span class="data-value">${info.vis}</span><br><span class="data-label">CANTIDAD:</span><span class="data-value">${info.qty}</span>`;
+}
+
+function toggleQR() {
+    const box = document.getElementById("qrBox");
+    const url = window.location.href;
+    document.getElementById("qrcode").innerHTML = `<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(url)}">`;
+    box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.onupdatefound = () => {
+            const installingWorker = reg.installing;
+            installingWorker.onstatechange = () => {
+                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    window.location.reload();
+                }
+            };
+        };
+    });
+}
+
+function checkUpdates() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg) reg.update().then(() => alert("Buscando cambios..."));
+        });
+    }
+}
 </script>
 </body>
 </html>
