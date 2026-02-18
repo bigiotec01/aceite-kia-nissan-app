@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.3.4</title>
+    <title>Oil Guide Pro v2.4</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
@@ -11,25 +11,20 @@
         .header-container {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 20px; height: 50px; background: #161a20;
-            border-radius: 12px; padding: 0 10px;
+            border-radius: 12px; padding: 0 10px; border: 1px solid #333;
         }
-        h1 { font-size: 16px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
-        .logo-slot { width: 55px; height: 100%; display: flex; justify-content: center; align-items: center; }
-        svg { width: 100%; height: auto; max-height: 22px; transition: 0.3s; }
+        h1 { font-size: 15px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .logo-slot { width: 50px; height: 100%; display: flex; justify-content: center; align-items: center; }
+        svg { width: 100%; height: auto; max-height: 20px; }
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
-        select, button, textarea { 
-            width:100%; padding:14px; margin-top:10px; font-size:16px; 
-            border-radius:10px; border:none; box-sizing: border-box; 
-        }
-        select, textarea { background:#2a2e38; color:#fff; border: 1px solid #444; }
+        select, button { width:100%; padding:14px; margin-top:10px; font-size:16px; border-radius:10px; border:none; box-sizing: border-box; }
+        select { background:#2a2e38; color:#fff; border: 1px solid #444; }
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; }
-        #qrBox { display: none; text-align: center; margin-top: 10px; padding: 10px; background: #fff; border-radius: 12px; }
-        #qrBox img { width: 140px; height: 140px; }
-        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; font-size: 11px; padding: 8px; }
         #resultado { background:#161a20; padding:20px; margin-top:18px; border-radius:12px; border-left: 6px solid #3da9fc; display: none; }
-        .data-label { color: #888; font-size: 13px; display: block; margin-top: 10px; }
         .data-value { color: #3da9fc; font-weight: bold; font-size: 22px; }
-        footer { margin-top:40px; text-align:center; font-size:12px; opacity:0.4; }
+        #qrBox { display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 12px; text-align: center; }
+        #qrBox img { width: 160px; height: 160px; margin: 0 auto; }
+        footer { margin-top:40px; text-align:center; font-size:11px; opacity:0.4; }
     </style>
 </head>
 <body>
@@ -42,7 +37,7 @@
 
     <div class="card">
         <select id="brand" onchange="loadModels()">
-            <option value="">-- MARCA --</option>
+            <option value="">-- SELECCIONAR MARCA --</option>
             <option value="kia">KIA</option>
             <option value="nissan">NISSAN</option>
         </select>
@@ -52,24 +47,22 @@
         <select id="year">
             <option value="">-- AÑO --</option>
         </select>
-        <button onclick="buscarAceite()">CONSULTAR DATOS</button>
+        <button onclick="buscarAceite()">VER RECOMENDACIÓN</button>
     </div>
 
     <div id="resultado"></div>
 
     <div class="card" style="text-align: center;">
-        <button onclick="toggleQR()" style="background:#444; color:#fff; font-size:12px;">📲 COMPARTIR APP (QR)</button>
+        <button onclick="toggleQR()" style="background:#333; color:#fff; font-size:12px;">📲 COMPARTIR APP (QR)</button>
         <div id="qrBox">
             <div id="qrcode"></div>
-            <p style="color:#000; font-size:11px; margin-top:5px; font-weight:bold;">Escanea para instalar</p>
+            <p style="color:#000; font-size:12px; font-weight:bold; margin-top:10px;">Escanea para instalar</p>
         </div>
     </div>
 
-    <div class="card" style="border-color: #3da9fc; padding: 10px;">
-        <button class="btn-update" onclick="checkUpdates()">🔄 FORZAR ACTUALIZACIÓN</button>
-    </div>
+    <button onclick="forceUpdate()" style="background:transparent; color:#3da9fc; border:1px solid #3da9fc; font-size:11px; margin-top:10px;">🔄 RESETEAR CACHÉ</button>
 
-    <footer>Versión 2.3.4 · Ismael Bigio</footer>
+    <footer>Versión 2.4 · Ismael Bigio</footer>
 
 <script>
 const logos = {
@@ -79,9 +72,7 @@ const logos = {
 
 function oilData(v1, q1, v2, q2) {
     const obj = {};
-    for (let y = 2015; y <= 2026; y++) { 
-        obj[y] = (y < 2021) ? { vis: v1, qty: q1 } : { vis: v2, qty: q2 };
-    }
+    for (let y = 2015; y <= 2026; y++) { obj[y] = (y < 2021) ? { vis: v1, qty: q1 } : { vis: v2, qty: q2 }; }
     return obj;
 }
 
@@ -89,7 +80,7 @@ const kiaData = {
     "Cadenza": oilData("5W-20", "5.1 qts", "5W-20", "5.1 qts"),
     "Carnival": oilData("0W-20", "6.5 qts", "0W-20", "6.5 qts"),
     "Forte": oilData("5W-20", "4.2 qts", "0W-20", "4.2 qts"),
-    "K4": { 2024: {vis:"0W-20", qty:"4.2 qts"}, 2025: {vis:"0W-20", qty:"4.2 qts"}, 2026: {vis:"0W-20", qty:"4.2 qts"} },
+    "K4": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
     "Rio": oilData("5W-20", "3.5 qts", "5W-20", "3.7 qts"),
     "Seltos": oilData("0W-20", "4.2 qts", "0W-20", "4.2 qts"),
     "Sorento": oilData("5W-20", "6.1 qts", "0W-20", "6.1 qts"),
@@ -111,9 +102,9 @@ const nissanData = {
 
 function loadModels() {
     const brand = document.getElementById("brand").value;
-    const modelDropdown = document.getElementById("model");
     document.getElementById("logoLeft").innerHTML = logos[brand] || "";
     document.getElementById("logoRight").innerHTML = logos[brand] || "";
+    const modelDropdown = document.getElementById("model");
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
     if (!brand) return;
     const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
@@ -146,35 +137,42 @@ function buscarAceite() {
     const info = b === "kia" ? kiaData[m][y] : nissanData[m][y];
     const resDiv = document.getElementById("resultado");
     resDiv.style.display = "block";
-    resDiv.innerHTML = `<span class="data-label">VISCOSIDAD:</span><span class="data-value">${info.vis}</span><br><span class="data-label">CANTIDAD:</span><span class="data-value">${info.qty}</span>`;
+    resDiv.innerHTML = `ACEITE: <span class="data-value">${info.vis}</span><br>CANTIDAD: <span class="data-value">${info.qty}</span>`;
 }
 
 function toggleQR() {
     const box = document.getElementById("qrBox");
-    const url = window.location.href;
-    document.getElementById("qrcode").innerHTML = `<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=${encodeURIComponent(url)}">`;
+    const url = window.location.origin; // Usa la raíz del sitio
+    document.getElementById("qrcode").innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}">`;
     box.style.display = box.style.display === "block" ? "none" : "block";
 }
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(reg => {
-        reg.onupdatefound = () => {
-            const installingWorker = reg.installing;
-            installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    window.location.reload();
-                }
-            };
-        };
-    });
-}
-
-function checkUpdates() {
+function forceUpdate() {
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistration().then(reg => {
-            if (reg) reg.update().then(() => alert("Buscando cambios..."));
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            for(let registration of registrations) { registration.unregister(); }
+            caches.keys().then(names => {
+                for (let name of names) caches.delete(name);
+                alert("Memoria limpia. La app se reiniciará.");
+                window.location.reload(true);
+            });
         });
     }
+}
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=2.4').then(reg => {
+            reg.onupdatefound = () => {
+                const worker = reg.installing;
+                worker.onstatechange = () => {
+                    if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+                        window.location.reload();
+                    }
+                };
+            };
+        });
+    });
 }
 </script>
 </body>
