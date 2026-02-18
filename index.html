@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.3.1</title>
+    <title>Oil Guide Pro v2.3.2</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        h1 { text-align:center; color:#3da9fc; margin-bottom:5px; font-size: 20px; }
         
-        /* Contenedor y logos mini para evitar que tapen el texto */
-        #logoContainer { 
-            height: 35px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-bottom: 10px; 
+        /* Cabecera con logos a los extremos */
+        .header-container {
+            display: flex;
+            justify-content:调整;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            height: 40px;
         }
-        svg { max-width: 65px; max-height: 30px; transition: 0.3s; }
+        h1 { font-size: 18px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .logo-slot { width: 50px; display: flex; justify-content: center; align-items: center; }
+        svg { max-width: 45px; max-height: 25px; transition: 0.3s; }
 
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button, textarea { 
@@ -29,7 +32,7 @@
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; transition: 0.3s; }
         button:active { transform: scale(0.97); }
         .btn-green { background:#2ecc71; color: white; }
-        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 12px; padding: 8px; }
+        .btn-update { background:#1c1f26; color:#3da9fc; border: 1px solid #3da9fc; margin-top: 5px; font-size: 11px; padding: 6px; }
         
         #resultado { 
             background:#161a20; padding:20px; margin-top:18px; 
@@ -48,9 +51,11 @@
 </head>
 <body>
 
-    <h1>🛢️ Oil Guide Pro</h1>
-
-    <div id="logoContainer"></div>
+    <div class="header-container">
+        <div id="logoLeft" class="logo-slot"></div>
+        <h1>Oil Guide Pro</h1>
+        <div id="logoRight" class="logo-slot"></div>
+    </div>
 
     <div class="card">
         <select id="brand" onchange="loadModels()">
@@ -70,21 +75,21 @@
     <div id="resultado"></div>
 
     <div id="correctionBox" class="card" style="display:none;">
-        <h3 style="margin-top:0; font-size:16px;">📝 Notas Técnicas</h3>
+        <h3 style="margin-top:0; font-size:15px;">📝 Notas Técnicas</h3>
         <textarea id="note" placeholder="Ej: Filtro PH6607..."></textarea>
         <button class="btn-green" onclick="guardarNota()">GUARDAR NOTA</button>
     </div>
 
-    <div class="card" style="border-color: #3da9fc; padding: 10px;">
+    <div class="card" style="border-color: #3da9fc; padding: 8px;">
         <button class="btn-update" onclick="checkUpdates()">🔄 ACTUALIZAR APP</button>
     </div>
 
     <div id="historialSection">
-        <h3 style="color:#888; font-size:15px;">Consultas Recientes</h3>
+        <h3 style="color:#888; font-size:14px;">Consultas Recientes</h3>
         <div id="listaHistorial"></div>
     </div>
 
-    <footer>Versión 2.3.1 · Ismael Bigio</footer>
+    <footer>Versión 2.3.2 · Ismael Bigio</footer>
 
 <script>
 const logos = {
@@ -143,9 +148,15 @@ const nissanData = {
 function loadModels() {
     const brand = document.getElementById("brand").value;
     const modelDropdown = document.getElementById("model");
-    const container = document.getElementById("logoContainer");
+    const left = document.getElementById("logoLeft");
+    const right = document.getElementById("logoRight");
+    
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
-    container.innerHTML = logos[brand] || "";
+    
+    // Pone el logo a ambos lados para equilibrio visual
+    left.innerHTML = logos[brand] || "";
+    right.innerHTML = logos[brand] || "";
+    
     if (!brand) return;
     const models = brand === "kia" ? Object.keys(kiaData) : Object.keys(nissanData);
     models.sort().forEach(m => {
