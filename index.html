@@ -3,25 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.3.2</title>
+    <title>Oil Guide Pro v2.3.3</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
         
-        /* Cabecera con logos a los extremos */
+        /* Cabecera optimizada para evitar recortes */
         .header-container {
             display: flex;
-            justify-content:调整;
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
-            height: 40px;
+            height: 50px;
+            background: #161a20;
+            border-radius: 12px;
+            padding: 0 10px;
         }
-        h1 { font-size: 18px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        h1 { font-size: 16px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
         
-        .logo-slot { width: 50px; display: flex; justify-content: center; align-items: center; }
-        svg { max-width: 45px; max-height: 25px; transition: 0.3s; }
+        .logo-slot { width: 60px; height: 100%; display: flex; justify-content: center; align-items: center; }
+        /* Ajuste de escala para que KIA no se corte */
+        svg { width: 100%; height: auto; max-height: 22px; transition: 0.3s; }
 
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button, textarea { 
@@ -89,12 +92,13 @@
         <div id="listaHistorial"></div>
     </div>
 
-    <footer>Versión 2.3.2 · Ismael Bigio</footer>
+    <footer>Versión 2.3.3 · Ismael Bigio</footer>
 
 <script>
+// Logos corregidos con viewBox más amplio para evitar recortes
 const logos = {
-    kia: `<svg viewBox="0 0 100 25" xmlns="http://www.w3.org/2000/svg"><path d="M25 0l-7 13.5L11 0H0l12.5 25L25 0zm25 0h-11v25h11V0zm39 0h-11l-12.5 25H53l12.5-25h11l12.5 25H100z" fill="#BB162B"/></svg>`,
-    nissan: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#1c1f26" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
+    kia: `<svg viewBox="-5 -2 110 30" xmlns="http://www.w3.org/2000/svg"><path d="M25 0l-7 13.5L11 0H0l12.5 25L25 0zm25 0h-11v25h11V0zm39 0h-11l-12.5 25H53l12.5-25h11l12.5 25H100z" fill="#BB162B"/></svg>`,
+    nissan: `<svg viewBox="-5 -5 110 110" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#161a20" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
 };
 
 function oilData(v1, q1, v2, q2) {
@@ -152,8 +156,6 @@ function loadModels() {
     const right = document.getElementById("logoRight");
     
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
-    
-    // Pone el logo a ambos lados para equilibrio visual
     left.innerHTML = logos[brand] || "";
     right.innerHTML = logos[brand] || "";
     
