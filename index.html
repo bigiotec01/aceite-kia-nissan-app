@@ -3,37 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oil Guide Pro v2.4</title>
+    <title>Oil Guide Pro v2.5</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f1115">
     <style>
         body { margin:0; font-family: 'Segoe UI', sans-serif; background:#0f1115; color:#eaeaea; padding:16px; line-height: 1.5; }
-        .header-container {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 20px; height: 50px; background: #161a20;
-            border-radius: 12px; padding: 0 10px; border: 1px solid #333;
-        }
-        h1 { font-size: 15px; color:#3da9fc; margin: 0; flex-grow: 1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
-        .logo-slot { width: 50px; height: 100%; display: flex; justify-content: center; align-items: center; }
-        svg { width: 100%; height: auto; max-height: 20px; }
+        
+        /* Título centrado y simple */
+        h1 { text-align:center; color:#3da9fc; margin: 20px 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        
         .card { background:#1c1f26; padding:18px; border-radius:16px; border: 1px solid #333; margin-bottom: 15px; }
         select, button { width:100%; padding:14px; margin-top:10px; font-size:16px; border-radius:10px; border:none; box-sizing: border-box; }
         select { background:#2a2e38; color:#fff; border: 1px solid #444; }
         button { background:#3da9fc; color:#000; font-weight:bold; cursor:pointer; }
+        
         #resultado { background:#161a20; padding:20px; margin-top:18px; border-radius:12px; border-left: 6px solid #3da9fc; display: none; }
+        .data-label { color: #888; font-size: 13px; display: block; margin-top: 10px; }
         .data-value { color: #3da9fc; font-weight: bold; font-size: 22px; }
+        
         #qrBox { display: none; margin-top: 15px; padding: 15px; background: white; border-radius: 12px; text-align: center; }
         #qrBox img { width: 160px; height: 160px; margin: 0 auto; }
-        footer { margin-top:40px; text-align:center; font-size:11px; opacity:0.4; }
+        
+        .btn-update { background:transparent; color:#3da9fc; border:1px solid #3da9fc; font-size: 11px; margin-top: 10px; padding: 8px; }
+        footer { margin-top:40px; text-align:center; font-size:11px; opacity:0.4; padding-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="header-container">
-        <div id="logoLeft" class="logo-slot"></div>
-        <h1>Oil Guide Pro</h1>
-        <div id="logoRight" class="logo-slot"></div>
-    </div>
+    <h1>Oil Guide Pro</h1>
 
     <div class="card">
         <select id="brand" onchange="loadModels()">
@@ -60,16 +57,11 @@
         </div>
     </div>
 
-    <button onclick="forceUpdate()" style="background:transparent; color:#3da9fc; border:1px solid #3da9fc; font-size:11px; margin-top:10px;">🔄 RESETEAR CACHÉ</button>
+    <button class="btn-update" onclick="forceUpdate()">🔄 RESETEAR CACHÉ / ACTUALIZAR</button>
 
-    <footer>Versión 2.4 · Ismael Bigio</footer>
+    <footer>Versión 2.5 · Ismael Bigio</footer>
 
 <script>
-const logos = {
-    kia: `<svg viewBox="-5 -2 110 30" xmlns="http://www.w3.org/2000/svg"><path d="M25 0l-7 13.5L11 0H0l12.5 25L25 0zm25 0h-11v25h11V0zm39 0h-11l-12.5 25H53l12.5-25h11l12.5 25H100z" fill="#BB162B"/></svg>`,
-    nissan: `<svg viewBox="-5 -5 110 110" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="5"/><rect x="5" y="40" width="90" height="20" fill="#161a20" stroke="white" stroke-width="4"/><text x="50" y="55" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="white">NISSAN</text></svg>`
-};
-
 function oilData(v1, q1, v2, q2) {
     const obj = {};
     for (let y = 2015; y <= 2026; y++) { obj[y] = (y < 2021) ? { vis: v1, qty: q1 } : { vis: v2, qty: q2 }; }
@@ -102,8 +94,6 @@ const nissanData = {
 
 function loadModels() {
     const brand = document.getElementById("brand").value;
-    document.getElementById("logoLeft").innerHTML = logos[brand] || "";
-    document.getElementById("logoRight").innerHTML = logos[brand] || "";
     const modelDropdown = document.getElementById("model");
     modelDropdown.innerHTML = '<option value="">-- MODELO --</option>';
     if (!brand) return;
@@ -137,12 +127,12 @@ function buscarAceite() {
     const info = b === "kia" ? kiaData[m][y] : nissanData[m][y];
     const resDiv = document.getElementById("resultado");
     resDiv.style.display = "block";
-    resDiv.innerHTML = `ACEITE: <span class="data-value">${info.vis}</span><br>CANTIDAD: <span class="data-value">${info.qty}</span>`;
+    resDiv.innerHTML = `<span class="data-label">VISCOSIDAD:</span><span class="data-value">${info.vis}</span><br><span class="data-label">CANTIDAD:</span><span class="data-value">${info.qty}</span>`;
 }
 
 function toggleQR() {
     const box = document.getElementById("qrBox");
-    const url = window.location.origin; // Usa la raíz del sitio
+    const url = window.location.origin;
     document.getElementById("qrcode").innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(url)}">`;
     box.style.display = box.style.display === "block" ? "none" : "block";
 }
@@ -153,7 +143,7 @@ function forceUpdate() {
             for(let registration of registrations) { registration.unregister(); }
             caches.keys().then(names => {
                 for (let name of names) caches.delete(name);
-                alert("Memoria limpia. La app se reiniciará.");
+                alert("Memoria limpia. Reiniciando...");
                 window.location.reload(true);
             });
         });
@@ -161,18 +151,7 @@ function forceUpdate() {
 }
 
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=2.4').then(reg => {
-            reg.onupdatefound = () => {
-                const worker = reg.installing;
-                worker.onstatechange = () => {
-                    if (worker.state === 'installed' && navigator.serviceWorker.controller) {
-                        window.location.reload();
-                    }
-                };
-            };
-        });
-    });
+    navigator.serviceWorker.register('./sw.js?v=2.5');
 }
 </script>
 </body>
