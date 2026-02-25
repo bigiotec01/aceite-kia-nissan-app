@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oil Guide Pro v4.0</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0f172a;
+            --surface:   #1e293b;
+            --surface2:  #273447;
+            --border:    #334155;
+            --primary:   #3b82f6;
+            --amber:     #f59e0b;
+            --green:     #22c55e;
+            --red:       #ef4444;
+            --text:      #f1f5f9;
+            --muted:     #94a3b8;
+            --radius:    16px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 16px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ── Header ─────────────────────────────────── */
+        header {
+            text-align: center;
+            padding: 28px 0 22px;
+        }
+
+        .header-icon {
+            font-size: 36px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--text);
+        }
+
+        .header-title span { color: var(--amber); }
+
+        .header-sub {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+
+        /* ── Cards ───────────────────────────────────── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 14px;
+        }
+
+        .card-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            margin-bottom: 14px;
+        }
+
+        /* ── Form ────────────────────────────────────── */
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 13px 14px;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            margin-bottom: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 42px;
+            cursor: pointer;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+        }
+
+        input::placeholder { color: var(--border); }
+
+        textarea { resize: vertical; margin-bottom: 14px; }
+
+        /* Search wrapper */
+        .search-wrap { position: relative; }
+        .search-wrap .ico {
+            position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%); font-size: 16px;
+            pointer-events: none; margin-top: -7px;
+        }
+        .search-wrap input { padding-left: 42px; }
+
+        /* ── Brand Tabs ──────────────────────────────── */
+        .brand-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .brand-tab {
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: var(--bg);
+            color: var(--muted);
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .brand-tab:hover { border-color: var(--primary); color: var(--primary); }
+
+        .brand-tab.active {
+            border-color: var(--primary);
+            background: rgba(59,130,246,0.12);
+            color: var(--primary);
+        }
+
+        /* ── Buttons ─────────────────────────────────── */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .btn:active { transform: scale(0.98); }
+
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-save {
+            background: rgba(34,197,94,0.1);
+            border: 1px solid var(--green);
+            color: var(--green);
+            margin-top: 8px;
+        }
+
+        .btn-share {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            margin-top: 8px;
+            font-size: 13px;
+        }
+
+        /* ── Result Card ─────────────────────────────── */
+        #resultado { display: none; animation: fadeUp 0.3s ease; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-meta {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 18px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .r-brand {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 2px;
+        }
+
+        .r-model {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.1;
+        }
+
+        .r-year-badge {
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.35);
+            color: var(--primary);
+            padding: 5px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        /* Viscosity hero */
+        .vis-box {
+            border-radius: 14px;
+            padding: 22px 16px;
+            text-align: center;
+            margin-bottom: 12px;
+            border: 1px solid rgba(245,158,11,0.3);
+            background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04));
+        }
+
+        .vis-box .lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--amber);
+            margin-bottom: 6px;
+        }
+
+        .vis-box .val {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--amber);
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        /* Info grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .info-cell {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        .info-cell .lbl {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .info-cell .val {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .info-cell.green .val { color: var(--green); }
+
+        /* Edit section */
+        .edit-sep {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 16px 0;
+        }
+
+        /* ── Footer ──────────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 20px 0 10px;
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .update-btn {
+            background: transparent;
+            border: none;
+            color: var(--border);
+            font-size: 11px;
+            cursor: pointer;
+            display: block;
+            margin: 10px auto 0;
+            font-family: inherit;
+        }
+
+        .update-btn:hover { color: var(--muted); }
+
+        /* ── Utility ─────────────────────────────────── */
+        select option { background: #1e293b; }
+    </style>
+</head>
+<body>
+
+<!-- ─── Header ─────────────────────────────────────── -->
+<header>
+    <span class="header-icon">🔧</span>
+    <div class="header-title">Oil<span>Guide</span> Pro</div>
+    <div class="header-sub">Mana Auto Service &middot; v4.0</div>
+</header>
+
+<!-- ─── Search & Selection ────────────────────────── -->
+<div class="card">
+    <div class="card-label">Consultar vehículo</div>
+
+    <div class="search-wrap">
+        <span class="ico">🔍</span>
+        <input type="text" id="searchBox" placeholder="Buscar modelo (ej: Rogue, K5…)" oninput="filterModels()">
+    </div>
+
+    <label>Marca</label>
+    <div class="brand-tabs">
+        <div class="brand-tab" id="tab-kia"    onclick="selectBrand('kia')">KIA</div>
+        <div class="brand-tab" id="tab-nissan" onclick="selectBrand('nissan')">NISSAN</div>
+    </div>
+
+    <label>Modelo</label>
+    <select id="model" onchange="loadYears()">
+        <option value="">— Seleccionar modelo —</option>
+    </select>
+
+    <label>Año</label>
+    <select id="year">
+        <option value="">— Seleccionar año —</option>
+    </select>
+
+    <button class="btn btn-primary" onclick="buscarAceite()">Consultar datos de aceite</button>
+</div>
+
+<!-- ─── Results ───────────────────────────────────── -->
+<div id="resultado" class="card">
+
+    <div class="result-meta">
+        <div>
+            <div class="r-brand" id="r-brand"></div>
+            <div class="r-model" id="r-model"></div>
+        </div>
+        <div class="r-year-badge" id="r-year"></div>
+    </div>
+
+    <div class="vis-box">
+        <div class="lbl">Viscosidad recomendada</div>
+        <div class="val" id="r-vis"></div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-cell">
+            <div class="lbl">🛢️ Capacidad</div>
+            <div class="val" id="r-qty"></div>
+        </div>
+        <div class="info-cell green">
+            <div class="lbl">🔩 Filtro OEM</div>
+            <div class="val" id="r-filter" style="font-size:13px;"></div>
+        </div>
+    </div>
+
+    <hr class="edit-sep">
+    <div class="card-label">Editar / Notas</div>
+
+    <label>Viscosidad</label>
+    <input type="text" id="editVis">
+
+    <label>Capacidad</label>
+    <input type="text" id="editQty">
+
+    <label>Filtro OEM</label>
+    <input type="text" id="editFilter">
+
+    <label>Notas técnicas</label>
+    <textarea id="editNote" rows="2" placeholder="Observaciones, condición del filtro…"></textarea>
+
+    <button class="btn btn-save"  onclick="saveCustomData()">💾 Guardar como predeterminado</button>
+    <button class="btn btn-share" onclick="shareReport()">📤 Copiar reporte WhatsApp</button>
+</div>
+
+<button class="update-btn" onclick="forceUpdate()">↻ Actualizar sistema v4.0</button>
+<footer>v4.0 &nbsp;·&nbsp; Oil Guide Pro &nbsp;·&nbsp; Ismael Bigio</footer>
+
+<!-- ─── Script ────────────────────────────────────── -->
+<script>
+
+/* ── Helpers ───────────────────────────────────────── */
+function yr(s, e, vis, qty, filter) {
+    const o = {};
+    for (let y = s; y <= e; y++) o[y] = { vis, qty, filter };
+    return o;
+}
+function merge(...r) { return Object.assign({}, ...r); }
+
+/* ══════════════════════════════════════════════════
+   KIA — Datos por rango de año
+   ══════════════════════════════════════════════════ */
+const kiaData = {
+
+    // Cadenza 3.3L V6 — solo hasta 2020 (descontinuado)
+    "Cadenza":   yr(2015, 2020, "5W-20",  "5.1 qts",  "26300-35505"),
+
+    // Carnival 3.5L V6 — desde 2022 (reemplazó Sedona)
+    "Carnival":  yr(2022, 2026, "5W-20",  "6.5 qts",  "26320-3CAA0"),
+
+    // Forte:
+    //   2015-2018: 2.0L Nu          → 5W-20
+    //   2019-2024: 2.0L Smartstream → 0W-20
+    "Forte": merge(
+        yr(2015, 2018, "5W-20",  "4.2 qts",  "26300-35505"),
+        yr(2019, 2024, "0W-20",  "4.75 qts", "26300-35505")
+    ),
+
+    // K4 — nuevo modelo 2025, reemplaza Forte en EE.UU.
+    // 2.0L Smartstream → 0W-20
+    "K4":        yr(2025, 2026, "0W-20",  "5.1 qts",  "26300-35505"),
+
+    // K5 — reemplazó Optima en 2021
+    // 2.5L Smartstream → 0W-20
+    "K5":        yr(2021, 2026, "0W-20",  "5.1 qts",  "26350-2S000"),
+
+    // Optima 2.4L / 2.0T — hasta 2020
+    "Optima":    yr(2015, 2020, "5W-20",  "5.1 qts",  "26300-35505"),
+
+    // Rio:
+    //   2015-2017: 1.6L Gamma   → 5W-20
+    //   2018-2026: 1.6L Gamma II → 0W-20
+    "Rio": merge(
+        yr(2015, 2017, "5W-20",  "3.7 qts",  "26300-35505"),
+        yr(2018, 2026, "0W-20",  "3.7 qts",  "26300-35505")
+    ),
+
+    // Sedona 3.3L V6 — hasta 2021 (desde 2022 es Carnival)
+    "Sedona":    yr(2015, 2021, "5W-20",  "6.5 qts",  "26320-3CAA0"),
+
+    // Seltos 2.0L Smartstream — desde 2021
+    "Seltos":    yr(2021, 2026, "0W-20",  "4.75 qts", "26300-35505"),
+
+    // Sorento:
+    //   2015-2020: 2.4L / 3.3L → 5W-20
+    //   2021-2026: 2.5L Smartstream → 5W-30
+    "Sorento": merge(
+        yr(2015, 2020, "5W-20",  "5.1 qts",  "26320-3CAA0"),
+        yr(2021, 2026, "5W-30",  "6.1 qts",  "26350-2S000")
+    ),
+
+    // Soul:
+    //   2015-2019: 2.0L Nu → 5W-20
+    //   2020-2026: 2.0L Smartstream → 0W-20
+    "Soul": merge(
+        yr(2015, 2019, "5W-20",  "4.75 qts", "26300-35505"),
+        yr(2020, 2026, "0W-20",  "4.75 qts", "26300-35505")
+    ),
+
+    // Sportage:
+    //   2015-2022: 2.4L Nu → 5W-20
+    //   2023-2026: 2.5L Smartstream NX5 → 5W-30
+    "Sportage": merge(
+        yr(2015, 2022, "5W-20",  "5.1 qts",  "26300-35505"),
+        yr(2023, 2026, "5W-30",  "5.4 qts",  "26350-2S000")
+    ),
+
+    // Telluride 3.8L V6 Lambda — desde 2020
+    "Telluride": yr(2020, 2026, "5W-30",  "6.5 qts",  "26320-3CAA0")
+};
+
+/* ══════════════════════════════════════════════════
+   NISSAN — Datos por rango de año
+   ══════════════════════════════════════════════════ */
+const nissanData = {
+
+    // Altima:
+    //   2015-2018: 2.5L QR25DE → 5W-30
+    //   2019-2026: 2.5L VC-Turbo / KR20DDET → 0W-20
+    "Altima": merge(
+        yr(2015, 2018, "5W-30",  "4.8 qts",  "15208-65F0E"),
+        yr(2019, 2026, "0W-20",  "5.1 qts",  "15208-65F0E")
+    ),
+
+    // Armada 5.6L VK56VD — desde 2017 (rediseño)
+    "Armada":    yr(2017, 2026, "5W-30",  "6.9 qts",  "15208-9E01A"),
+
+    // Frontier:
+    //   2015-2021: 4.0L VQ40DE → 5W-30, 5.6 qts
+    //   2022-2026: 3.8L PR38DD → 5W-30, 5.4 qts
+    "Frontier": merge(
+        yr(2015, 2021, "5W-30",  "5.6 qts",  "15208-9E01A"),
+        yr(2022, 2026, "5W-30",  "5.4 qts",  "15208-9E01A")
+    ),
+
+    // Kicks 1.6L HR16DE — desde 2018
+    "Kicks":     yr(2018, 2026, "0W-20",  "3.7 qts",  "15208-65F0E"),
+
+    // Maxima 3.5L VQ35DE — desde 2016
+    "Maxima":    yr(2016, 2026, "5W-30",  "5.1 qts",  "15208-9E01A"),
+
+    // Murano 3.5L VQ35DE — 2015 en adelante
+    "Murano":    yr(2015, 2026, "5W-30",  "5.4 qts",  "15208-9E01A"),
+
+    // Pathfinder:
+    //   2015-2021: 3.5L VQ35DE → 5W-30
+    //   2022-2026: 3.5L VQ35DD (direct injection) → 0W-20
+    "Pathfinder": merge(
+        yr(2015, 2021, "5W-30",  "5.4 qts",  "15208-9E01A"),
+        yr(2022, 2026, "0W-20",  "5.4 qts",  "15208-9E01A")
+    ),
+
+    // Rogue 2.5L — 0W-20 en todos los años (QR25DE / VR25DDTT)
+    "Rogue":     yr(2015, 2026, "0W-20",  "5.1 qts",  "15208-65F0E"),
+
+    // Sentra:
+    //   2015-2019: 1.8L MR18DE → 5W-30, 3.9 qts
+    //   2020-2026: 2.0L MR20DE → 0W-20, 4.4 qts
+    "Sentra": merge(
+        yr(2015, 2019, "5W-30",  "3.9 qts",  "15208-65F0E"),
+        yr(2020, 2026, "0W-20",  "4.4 qts",  "15208-65F0E")
+    ),
+
+    // Titan 5.6L VK56VD — desde 2017 (rediseño 2a gen)
+    "Titan":     yr(2017, 2026, "5W-30",  "6.9 qts",  "15208-9E01A"),
+
+    // Versa:
+    //   2015-2019: 1.6L HR16DE → 5W-30
+    //   2020-2026: 1.6L HR16DE → 0W-20 (rediseño 3a gen)
+    "Versa": merge(
+        yr(2015, 2019, "5W-30",  "3.7 qts",  "15208-65F0E"),
+        yr(2020, 2026, "0W-20",  "3.7 qts",  "15208-65F0E")
+    ),
+
+    // Xterra 4.0L VQ40DE — descontinuado tras 2015 (modelos 2005-2015)
+    "Xterra":    yr(2005, 2015, "5W-30",  "5.4 qts",  "15208-9E01A"),
+
+    // NV200 2.0L MR20DE — van de carga/pasajeros (2013-2021)
+    "NV200":     yr(2013, 2021, "5W-30",  "4.4 qts",  "15208-65F0E"),
+
+    // 350Z 3.5L VQ35DE/VQ35HR — deportivo clásico (2003-2009)
+    "350Z":      yr(2003, 2009, "5W-30",  "5.6 qts",  "15208-9E01A"),
+
+    // 370Z 3.7L VQ37VHR — sucesor del 350Z (2009-2020)
+    "370Z":      yr(2009, 2020, "5W-30",  "5.6 qts",  "15208-9E01A"),
+
+    // Nissan Z 3.0L VR30DDTT Twin-Turbo — nueva generación (2023+)
+    "Nissan Z":  yr(2023, 2026, "5W-30",  "5.4 qts",  "15208-9E01A")
+};
+
+/* ══════════════════════════════════════════════════
+   Lógica principal
+   ══════════════════════════════════════════════════ */
+let selectedBrand = "";
+
+function selectBrand(brand) {
+    selectedBrand = brand;
+    document.querySelectorAll('.brand-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + brand).classList.add('active');
+    loadModels();
+    document.getElementById("resultado").style.display = "none";
+}
+
+function loadModels() {
+    const data = selectedBrand === 'kia' ? kiaData : nissanData;
+    const sel  = document.getElementById("model");
+    sel.innerHTML = '<option value="">— Seleccionar modelo —</option>';
+    if (!selectedBrand) return;
+
+    Object.keys(data).sort().forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = opt.textContent = m;
+        sel.appendChild(opt);
+    });
+
+    document.getElementById("year").innerHTML = '<option value="">— Seleccionar año —</option>';
+}
+
+function loadYears() {
+    const m   = document.getElementById("model").value;
+    const sel = document.getElementById("year");
+    sel.innerHTML = '<option value="">— Seleccionar año —</option>';
+    document.getElementById("resultado").style.display = "none";
+    if (!m || !selectedBrand) return;
+
+    const data = (selectedBrand === "kia" ? kiaData : nissanData)[m];
+    Object.keys(data).sort((a, b) => b - a).forEach(y => {
+        const opt = document.createElement("option");
+        opt.value = opt.textContent = y;
+        sel.appendChild(opt);
+    });
+}
+
+function filterModels() {
+    const val = document.getElementById("searchBox").value.toLowerCase().trim();
+    if (val.length < 2) return;
+
+    const all = [
+        ...Object.keys(kiaData).map(m => ({ brand: 'kia', model: m })),
+        ...Object.keys(nissanData).map(m => ({ brand: 'nissan', model: m }))
+    ];
+
+    const hit = all.find(x => x.model.toLowerCase().includes(val));
+    if (!hit) return;
+
+    selectBrand(hit.brand);
+    setTimeout(() => {
+        document.getElementById("model").value = hit.model;
+        loadYears();
+    }, 10);
+}
+
+function buscarAceite() {
+    const m = document.getElementById("model").value;
+    const y = document.getElementById("year").value;
+
+    if (!selectedBrand || !m || !y) {
+        alert("Por favor selecciona marca, modelo y año.");
+        return;
+    }
+
+    const base      = (selectedBrand === "kia" ? kiaData : nissanData)[m][y];
+    const saved     = JSON.parse(localStorage.getItem(`custom-${selectedBrand}-${m}-${y}`)) || {};
+
+    const vis    = saved.vis    || base.vis;
+    const qty    = saved.qty    || base.qty;
+    const filter = saved.filter || base.filter;
+    const note   = saved.note   || "";
+
+    // Resultado visual
+    document.getElementById("r-brand").textContent  = selectedBrand.toUpperCase();
+    document.getElementById("r-model").textContent  = m;
+    document.getElementById("r-year").textContent   = y;
+    document.getElementById("r-vis").textContent    = vis;
+    document.getElementById("r-qty").textContent    = qty;
+    document.getElementById("r-filter").textContent = filter;
+
+    // Campos editables
+    document.getElementById("editVis").value    = vis;
+    document.getElementById("editQty").value    = qty;
+    document.getElementById("editFilter").value = filter;
+    document.getElementById("editNote").value   = note;
+
+    const card = document.getElementById("resultado");
+    card.style.display = "block";
+    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+}
+
+function saveCustomData() {
+    const m = document.getElementById("model").value;
+    const y = document.getElementById("year").value;
+    if (!y) return;
+
+    const data = {
+        vis:    document.getElementById("editVis").value,
+        qty:    document.getElementById("editQty").value,
+        filter: document.getElementById("editFilter").value,
+        note:   document.getElementById("editNote").value
+    };
+
+    localStorage.setItem(`custom-${selectedBrand}-${m}-${y}`, JSON.stringify(data));
+
+    // Actualizar vista
+    document.getElementById("r-vis").textContent    = data.vis;
+    document.getElementById("r-qty").textContent    = data.qty;
+    document.getElementById("r-filter").textContent = data.filter;
+
+    alert("✅ Datos guardados correctamente.");
+}
+
+function shareReport() {
+    const m      = document.getElementById("model").value;
+    const y      = document.getElementById("year").value;
+    const vis    = document.getElementById("editVis").value;
+    const qty    = document.getElementById("editQty").value;
+    const filter = document.getElementById("editFilter").value;
+    const note   = document.getElementById("editNote").value;
+
+    let txt = `*MANA AUTO SERVICE*\n`;
+    txt += `🚗 ${selectedBrand.toUpperCase()} ${m} ${y}\n`;
+    txt += `🛢️ Aceite: *${vis}*\n`;
+    txt += `📏 Cantidad: *${qty}*\n`;
+    txt += `🔩 Filtro OEM: *${filter}*`;
+    if (note.trim()) txt += `\n📝 ${note.trim()}`;
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(txt)
+            .then(() => alert("✅ Reporte copiado al portapapeles."))
+            .catch(() => fallbackCopy(txt));
+    } else {
+        fallbackCopy(txt);
+    }
+}
+
+function fallbackCopy(txt) {
+    const ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert("✅ Reporte copiado.");
+}
+
+function forceUpdate() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+            regs.forEach(r => r.unregister());
+            caches.keys().then(keys => {
+                keys.forEach(k => caches.delete(k));
+                location.reload(true);
+            });
+        });
+    } else {
+        location.reload(true);
+    }
+}
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js?v=4.0');
+}
+</script>
+</body>
+</html>
