@@ -31,6 +31,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  // Solo cachear GET — POST/PUT de Firebase no se pueden cachear
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
