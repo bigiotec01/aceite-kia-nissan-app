@@ -419,8 +419,24 @@
 <button class="update-btn" onclick="forceUpdate()">↻ Actualizar sistema v4.0</button>
 <footer>v4.0 &nbsp;·&nbsp; Oil Guide Pro &nbsp;·&nbsp; Ismael Bigio</footer>
 
+<!-- ─── Firebase SDK ───────────────────────────────── -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
 <!-- ─── Script ────────────────────────────────────── -->
 <script>
+
+/* ── Firebase ──────────────────────────────────────── */
+const firebaseConfig = {
+    apiKey: "AIzaSyDDkRTpGpPoqQkigde-KMaMYdG9DEYa77s",
+    authDomain: "aceites-55e06.firebaseapp.com",
+    projectId: "aceites-55e06",
+    storageBucket: "aceites-55e06.firebasestorage.app",
+    messagingSenderId: "728757236300",
+    appId: "1:728757236300:web:291c4cb410a79d278c7ae9"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 /* ── Helpers ───────────────────────────────────────── */
 function yr(s, e, vis, qty, filter) {
@@ -585,6 +601,7 @@ const nissanData = {
    Lógica principal
    ══════════════════════════════════════════════════ */
 let selectedBrand = "";
+let unsubscribe = null; // listener en tiempo real
 
 function selectBrand(brand) {
     selectedBrand = brand;
@@ -652,53 +669,65 @@ function buscarAceite() {
         return;
     }
 
-    const base      = (selectedBrand === "kia" ? kiaData : nissanData)[m][y];
-    const saved     = JSON.parse(localStorage.getItem(`custom-${selectedBrand}-${m}-${y}`)) || {};
+    const base = (selectedBrand === "kia" ? kiaData : nissanData)[m][y];
 
-    const vis    = saved.vis    || base.vis;
-    const qty    = saved.qty    || base.qty;
-    const filter = saved.filter || base.filter;
-    const note   = saved.note   || "";
+    // Cancelar listener anterior si existe
+    if (unsubscribe) unsubscribe();
 
-    // Resultado visual
-    document.getElementById("r-brand").textContent  = selectedBrand.toUpperCase();
-    document.getElementById("r-model").textContent  = m;
-    document.getElementById("r-year").textContent   = y;
-    document.getElementById("r-vis").textContent    = vis;
-    document.getElementById("r-qty").textContent    = qty;
-    document.getElementById("r-filter").textContent = filter;
+    const docRef = db.collection("customData").doc(`${selectedBrand}-${m}-${y}`);
 
-    // Campos editables
-    document.getElementById("editVis").value    = vis;
-    document.getElementById("editQty").value    = qty;
-    document.getElementById("editFilter").value = filter;
-    document.getElementById("editNote").value   = note;
+    // Listener en tiempo real — se actualiza en todas las PCs automáticamente
+    unsubscribe = docRef.onSnapshot(snap => {
+        const saved  = snap.exists ? snap.data() : {};
+        const vis    = saved.vis    || base.vis;
+        const qty    = saved.qty    || base.qty;
+        const filter = saved.filter || base.filter;
+        const note   = saved.note   || "";
 
-    const card = document.getElementById("resultado");
-    card.style.display = "block";
-    setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        // Resultado visual
+        document.getElementById("r-brand").textContent  = selectedBrand.toUpperCase();
+        document.getElementById("r-model").textContent  = m;
+        document.getElementById("r-year").textContent   = y;
+        document.getElementById("r-vis").textContent    = vis;
+        document.getElementById("r-qty").textContent    = qty;
+        document.getElementById("r-filter").textContent = filter;
+
+        // Campos editables
+        document.getElementById("editVis").value    = vis;
+        document.getElementById("editQty").value    = qty;
+        document.getElementById("editFilter").value = filter;
+        document.getElementById("editNote").value   = note;
+
+        const card = document.getElementById("resultado");
+        if (card.style.display === "none") {
+            card.style.display = "block";
+            setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        }
+    }, err => {
+        console.error("Error Firestore:", err);
+        alert("❌ Error al conectar con la nube: " + err.message);
+    });
 }
 
-function saveCustomData() {
+async function saveCustomData() {
     const m = document.getElementById("model").value;
     const y = document.getElementById("year").value;
-    if (!y) return;
+    if (!m || !y) return;
 
     const data = {
         vis:    document.getElementById("editVis").value,
         qty:    document.getElementById("editQty").value,
         filter: document.getElementById("editFilter").value,
-        note:   document.getElementById("editNote").value
+        note:   document.getElementById("editNote").value,
+        updatedAt: new Date().toISOString()
     };
 
-    localStorage.setItem(`custom-${selectedBrand}-${m}-${y}`, JSON.stringify(data));
-
-    // Actualizar vista
-    document.getElementById("r-vis").textContent    = data.vis;
-    document.getElementById("r-qty").textContent    = data.qty;
-    document.getElementById("r-filter").textContent = data.filter;
-
-    alert("✅ Datos guardados correctamente.");
+    try {
+        await db.collection("customData").doc(`${selectedBrand}-${m}-${y}`).set(data);
+        alert("✅ Guardado y sincronizado en la nube.");
+    } catch (e) {
+        alert("❌ Error al guardar: " + e.message);
+    }
 }
 
 function shareReport() {
